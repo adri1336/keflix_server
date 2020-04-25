@@ -18,7 +18,7 @@ const sequelize = new Sequelize(db_name, db_user, db_password, {
 const Account = AccountModel(sequelize, Sequelize);
 
 sequelize.sync({ force: false }).then(() => {
-    console.log("sync");
+    console.log("db sync");
 });
 
 module.exports = {

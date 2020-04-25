@@ -1,11 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const router = require("./routes/index");
+require("./db");
 
 const app = express();
-require("./db");
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use("/api", router);
 
 app.listen(3000, () => {
     console.log("cuervo_api started");
