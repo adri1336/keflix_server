@@ -1,12 +1,7 @@
-const Account = require("../model/Account");
+const { Account } = require("../config/db");
 
-//CRUD
 const create = async (body) => {
     return await Account.create(body);
-};
-
-const getAll = async () => {
-    return await Account.findAll();
 };
 
 const get = async (where) => {
@@ -15,32 +10,12 @@ const get = async (where) => {
     });
 };
 
-const update = async (body, where) => {
-    return await Account.update(body, {
-        where: where
-    });
-};
-
-const destroy = async (where) => {
-    return await Account.destroy({
-        where: where
-    });
-};
-
-const validate = async (email, password) => {
-    const account = await get({ email: email });
-    if(!account) return false;
-    if(await account.validPassword(password)) {
-        return account;
-    }
-    return null;
+const checkPassword = async (account, password) => {
+    return await account.validPassword(password);
 };
 
 module.exports = {
     create,
-    getAll,
     get,
-    update,
-    destroy,
-    validate
+    checkPassword
 };

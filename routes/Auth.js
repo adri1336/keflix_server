@@ -7,9 +7,10 @@ const AuthController = require("../controller/AuthController");
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-        let account = await AccountController.validate(email, password);
-    
-        if(!account) throw "invalid account or password";
+        let account = await AccountController.get({ email: email });
+        
+        if(!account) throw "invalid account";
+        if(!await AccountController.checkPassword(account, password)) throw "invalid password";
         account.password = undefined;
         
         const

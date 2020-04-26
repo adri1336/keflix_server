@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
 module.exports = (sequelize, DataTypes) => {
-    const Account = sequelize.define("account",
+    const Profile = sequelize.define("profile",
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -10,22 +10,22 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true,
                 primaryKey: true
             },
-            admin: {
+            name: {
+                type: DataTypes.STRING(24),
+                allowNull: false
+            },
+            password: { //profile pin code (optional)
+                type: DataTypes.CHAR(60),
+                allowNull: true
+            },
+            color: {
+                type: DataTypes.STRING(24),
+                allowNull: false
+            },
+            adult_content: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
                 defaultValue: false
-            },
-            email: {
-                type: DataTypes.STRING(64),
-                allowNull: false,
-                unique: true,
-                validate: {
-                    isEmail: true
-                }
-            },
-            password: {
-                type: DataTypes.CHAR(60),
-                allowNull: false
             }
         },
         {
@@ -33,17 +33,17 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    Account.beforeCreate(async (account) => {
+    Profile.beforeCreate(async (account) => {
         account.password = await bcrypt.hash(account.password, saltRounds);
     });
 
-    Account.beforeUpdate(async (account) => {
+    Profile.beforeUpdate(async (account) => {
         account.password = await bcrypt.hash(account.password, saltRounds);
     });
 
-    Account.prototype.validPassword = async function(password) { 
+    Profile.prototype.validPassword = async function(password) { 
         return await bcrypt.compare(password, this.password);
     };
 
-    return Account;
+    return Profile;
 };
