@@ -57,7 +57,6 @@ router.post("/token", async (req, res) => {
                 token: AuthController.generateAccessToken(account),
                 refresh_token: AuthController.generateRefreshToken(account)
             };
-            console.log(tokens);
             if(!tokens) throw "invalid refresh token";
         
             res.json(tokens);

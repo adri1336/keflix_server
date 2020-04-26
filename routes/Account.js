@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const AccountController = require("../controller/AccountController");
+const AuthController = require("../controller/AuthController");
 
 //MIDDLEWARE
 const { middlewareRouter } = require("./middleware");
@@ -31,7 +32,20 @@ router.put("/:id", async (req, res) => {
     try {
         const data = await AccountController.update(req.body, { id: req.params.id });
         if(!data[0]) throw "invalid id";
-        res.json(true);
+        
+        let id = req.params.id;
+        if(req.body.id) id = req.body.id;
+
+        const account = await AccountController.get({ id: id });
+        if(!account) throw "error";
+
+        const tokens = {
+            token: AuthController.generateAccessToken(account),
+            refresh_token: AuthController.generateRefreshToken(account)
+        };
+        if(!tokens) throw "error";
+
+        res.json(tokens);
     }
     catch(error) {
         res.status(400).json(error);
