@@ -1,44 +1,5 @@
 const router = require("express").Router();
-const Account = require("../controller/Account");
-const jwt = require("jsonwebtoken");
-const { secretKey, tokenExpiresIn } = require("../config");
-
-//LOGIN
-router.post("/login", async (req, res) => {
-    try {
-        const
-            { email, password } = req.body,
-            account = await Account.get({ email: email });
-            
-        if(!account) throw "invalid account";
-        if(!await Account.checkPassword(password, account.password)) throw "invalid password";
-
-        jwt.sign({ account: account }, secretKey, { expiresIn: tokenExpiresIn }, (error, token) => {
-            if(error) throw error;
-            res.json({ account, token });
-        });
-    }
-    catch(error) {
-        res.status(400).json(error);
-    }
-});
-
-//REGISTER
-router.post("/", async (req, res) => {
-    try {
-        const password = req.body.password;
-        const hashedPassword = await Account.hashPassword(password);
-        req.body.password = hashedPassword;
-        const account = await Account.create(req.body);
-        jwt.sign({ account: account }, secretKey, { expiresIn: tokenExpiresIn }, (error, token) => {
-            if(error) throw error;
-            res.json({ account, token });
-        });
-    }
-    catch(error) {
-        res.status(400).json(error);
-    }
-});
+const AccountController = require("../controller/AccountController");
 
 //MIDDLEWARE
 const { middlewareRouter } = require("./middleware");
@@ -47,7 +8,7 @@ router.use(middlewareRouter);
 //CRUD
 router.get("/", async (req, res) => {
     try {
-        const data = await Account.getAll();
+        const data = await AccountController.getAll();
         res.json(data);
     }
     catch(error) {
@@ -57,7 +18,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const data = await Account.get({ id: req.params.id });
+        const data = await AccountController.get({ id: req.params.id });
         if(!data) throw "invalid id";
         res.json(data);
     }
@@ -68,7 +29,7 @@ router.get("/:id", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
     try {
-        const data = await Account.update(req.body, { id: req.params.id });
+        const data = await AccountController.update(req.body, { id: req.params.id });
         if(!data[0]) throw "invalid id";
         res.json(true);
     }
@@ -79,7 +40,7 @@ router.put("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
     try {
-        const data = await Account.destroy({ id: req.params.id });
+        const data = await AccountController.destroy({ id: req.params.id });
         if(!data) throw "invalid id";
         res.json(true);
     }

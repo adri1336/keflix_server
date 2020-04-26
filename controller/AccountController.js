@@ -1,14 +1,4 @@
-const { Account } = require("../db");
-const { saltRounds } = require("../config");
-const bcrypt = require("bcrypt");
-
-const hashPassword = async (password) => {
-    return await bcrypt.hash(password, saltRounds);
-};
-
-const checkPassword = async (password, hashedPassword) => {
-    return await bcrypt.compare(password, hashedPassword);
-};
+const Account = require("../model/Account");
 
 //CRUD
 const create = async (body) => {
@@ -37,12 +27,20 @@ const destroy = async (where) => {
     });
 };
 
+const validate = async (email, password) => {
+    const account = await get({ email: email });
+    if(!account) return false;
+    if(await account.validPassword(password)) {
+        return account;
+    }
+    return null;
+};
+
 module.exports = {
-    hashPassword,
-    checkPassword,
     create,
     getAll,
     get,
     update,
-    destroy
+    destroy,
+    validate
 };
