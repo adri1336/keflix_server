@@ -1,6 +1,5 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const AccountController = require("../controller/AccountController");
 
 const middlewareRouter = (req, res, next) => {
     try {
@@ -8,10 +7,10 @@ const middlewareRouter = (req, res, next) => {
         const token = authHeader && authHeader.split(" ")[1];
         if(!token) throw "invalid token";
 
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, account) => {      
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
             if(error) throw "invalid token";
             
-            req.account = account;  
+            req.token = decoded;  
             next();
         });
     }
