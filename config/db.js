@@ -1,5 +1,6 @@
 require("dotenv").config();
 const Sequelize = require("sequelize");
+const CronJob = require('cron').CronJob;
 
 const
     AccountModel = require("../model/Account"),
@@ -40,6 +41,22 @@ Profile.belongsTo(Account);
 //Profile-LibraryMovie
 Profile.belongsToMany(LibraryMovie, { through: ProfileLibraryMovie });
 LibraryMovie.belongsToMany(Profile, { through: ProfileLibraryMovie });
+
+// --- Cron Jobs ---
+//LibraryMovie (restablecer a 0 views_today todos los días a las 00:00)
+new CronJob("0 0 * * *", async () => {
+    await LibraryMovie.update({ views_today: 0 }, { where: {} });
+}).start();
+
+//LibraryMovie (restablecer a 0 views_last_week todos los lunes a las 00:00)
+new CronJob("0 0 * * 1", async () => {
+    await LibraryMovie.update({ views_last_week: 0 }, { where: {} });
+}).start();
+
+//LibraryMovie (restablecer a 0 views_last_month el primer día del mes a las 00:00)
+new CronJob("0 0 1 * *", async () => {
+    await LibraryMovie.update({ views_last_month: 0 }, { where: {} });
+}).start();
 
 sequelize.authenticate()
     .then(() => {
