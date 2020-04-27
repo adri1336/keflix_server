@@ -11,7 +11,7 @@ const get = async (where) => {
 };
 
 const checkPassword = async (account, password) => {
-    return await account.validPassword(password);
+    return await account.checkPassword(password);
 };
 
 module.exports = {

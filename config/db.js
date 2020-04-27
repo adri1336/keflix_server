@@ -4,7 +4,8 @@ const Sequelize = require("sequelize");
 const
     AccountModel = require("../model/Account"),
     ProfileModel = require("../model/Profile"),
-    LibraryMovieModel = require("../model/LibraryMovie");
+    LibraryMovieModel = require("../model/LibraryMovie"),
+    ProfileLibraryMovieModel = require("../model/ProfileLibraryMovie");
 
 const
     db_host = process.env.DB_HOST,
@@ -22,7 +23,8 @@ const sequelize = new Sequelize(db_name, db_user, db_pass, {
 const
     Account = AccountModel(sequelize, Sequelize),
     Profile = ProfileModel(sequelize, Sequelize),
-    LibraryMovie = LibraryMovieModel(sequelize, Sequelize);
+    LibraryMovie = LibraryMovieModel(sequelize, Sequelize),
+    ProfileLibraryMovie = ProfileLibraryMovieModel(sequelize, Sequelize);
 
 // --- Associations ---
 //Account-Profile
@@ -36,8 +38,8 @@ Account.hasMany(Profile, {
 Profile.belongsTo(Account);
 
 //Profile-LibraryMovie
-Profile.belongsToMany(LibraryMovie, { through: "profile_library_movie" });
-LibraryMovie.belongsToMany(Profile, { through: "profile_library_movie" });
+Profile.belongsToMany(LibraryMovie, { through: ProfileLibraryMovie });
+LibraryMovie.belongsToMany(Profile, { through: ProfileLibraryMovie });
 
 sequelize.authenticate()
     .then(() => {
@@ -51,5 +53,6 @@ sequelize.authenticate()
 module.exports = {
     Account,
     Profile,
-    LibraryMovie
+    LibraryMovie,
+    ProfileLibraryMovie
 };

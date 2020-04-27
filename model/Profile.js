@@ -33,15 +33,19 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    Profile.beforeCreate(async (account) => {
-        account.password = await bcrypt.hash(account.password, saltRounds);
+    Profile.beforeCreate(async (profile) => {
+        if(profile.password) {
+            profile.password = await bcrypt.hash(profile.password, saltRounds);
+        }
     });
 
-    Profile.beforeUpdate(async (account) => {
-        account.password = await bcrypt.hash(account.password, saltRounds);
+    Profile.beforeUpdate(async (profile) => {
+        if(profile.password) {
+            profile.password = await bcrypt.hash(profile.password, saltRounds);
+        }
     });
 
-    Profile.prototype.validPassword = async function(password) { 
+    Profile.prototype.checkPassword = async function(password) { 
         return await bcrypt.compare(password, this.password);
     };
 
