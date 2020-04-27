@@ -54,23 +54,11 @@ Account.hasMany(LibraryMovie, {
 LibraryMovie.belongsTo(Account);
 
 //Profile-LibraryMovie
-Profile.hasMany(LibraryMovie, {
-    foreignKey: {
-        allowNull: false,
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE"
-    }
-});
+Profile.belongsToMany(LibraryMovie, { through: ProfileLibraryMovie });
 LibraryMovie.belongsToMany(Profile, { through: ProfileLibraryMovie });
 
 //Movie-Genre
-Movie.hasMany(Genre, {
-    foreignKey: {
-        allowNull: false,
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE"
-    }
-});
+Movie.belongsToMany(Genre, { through: "movie_genre" });
 Genre.belongsToMany(Movie, { through: "movie_genre" });
 
 //Account-Movie
@@ -104,7 +92,7 @@ new CronJob("0 0 1 * *", async () => {
 sequelize.authenticate()
     .then(() => {
         console.log("DB Connected");
-        sequelize.sync({ force: true }).then(() => {
+        sequelize.sync({ force: false }).then(() => {
             console.log("DB Synced");
         });
     })

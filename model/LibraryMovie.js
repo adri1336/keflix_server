@@ -1,3 +1,5 @@
+const { refreshGenres, createMovie } = require("../scripts/TMDb");
+
 module.exports = (sequelize, DataTypes) => {
     const LibraryMovie = sequelize.define("library_movie",
         {
@@ -38,8 +40,15 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    LibraryMovie.beforeCreate(async (libraryMovie) => {
+    LibraryMovie.afterCreate(async (libraryMovie) => {
         //TMDb API
+        try {
+            await refreshGenres();
+            await createMovie(libraryMovie);
+        }
+        catch(error) {
+            console.log("LibraryMovie.afterCreate error: ", error);
+        }
     });
 
     return LibraryMovie;
