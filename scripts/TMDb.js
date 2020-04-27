@@ -9,8 +9,6 @@ const
 
 const refreshGenres = async () => {
     try {
-        await GenreController.destroy({}); //destruimos todos los géneros actuales
-
         const
             response = await fetch("https://api.themoviedb.org/3/genre/movie/list?api_key=" + API_KEY + "&language=" + LANGUAGE),
             { genres } = await response.json();
@@ -18,7 +16,7 @@ const refreshGenres = async () => {
         if(!genres) throw "no genres";
         
         await Promise.all(genres.map(async genre => {
-            await GenreController.create(genre);
+            await GenreController.upsert(genre);
         }));
     }
     catch(error) {
