@@ -1,10 +1,7 @@
 const { Movie } = require("../config/db");
-const { Genre } = require("../config/db");
 
 const create = async (body) => {
-    return await Movie.create(body, {
-        include: [ Genre ]
-    });
+    return await Movie.create(body);
 };
 
 const destroy = async (where) => {

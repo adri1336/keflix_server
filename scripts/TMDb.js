@@ -46,6 +46,12 @@ const createMovie = async (libraryMovie) => {
             vote_average: api_movie.vote_average
         };
 
+        //genres
+        let genres = [];
+        api_movie.genres.map(api_genre => {
+            genres.push(api_genre.id);
+        });
+
         //trailer yt video
         response = await fetch("https://api.themoviedb.org/3/movie/" + api_movie.id + "/videos?api_key=" + API_KEY + "&language=" + LANGUAGE);
         const data = await response.json();
@@ -54,7 +60,8 @@ const createMovie = async (libraryMovie) => {
         }
 
         movie.libraryMovieId = libraryMovie.id;
-        await MovieController.create(movie);        
+        movie = await MovieController.create(movie);
+        movie.addGenres(genres);
     }
     catch(error) {
         console.log("TMDb Script Error (createMovie): ", error);
