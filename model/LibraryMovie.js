@@ -42,9 +42,5 @@ module.exports = (sequelize, DataTypes) => {
         //TMDb API
     });
 
-    LibraryMovie.beforeUpdate(async (libraryMovie) => {
-        //TMDb API
-    });
-
     return LibraryMovie;
 };

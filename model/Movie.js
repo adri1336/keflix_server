@@ -6,6 +6,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true
             },
+            published: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false
+            },
             adult: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false

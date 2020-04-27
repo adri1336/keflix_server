@@ -1,11 +1,11 @@
-const { LibraryMovie } = require("../config/db");
+const { Genre } = require("../config/db");
 
 const create = async (body) => {
-    return await LibraryMovie.create(body);
+    return await Genre.create(body);
 };
 
 const destroy = async (where) => {
-    return await Profile.destroy({
+    return await Genre.destroy({
         where: where
     });
 };

@@ -54,11 +54,23 @@ Account.hasMany(LibraryMovie, {
 LibraryMovie.belongsTo(Account);
 
 //Profile-LibraryMovie
-Profile.belongsToMany(LibraryMovie, { through: ProfileLibraryMovie });
+Profile.hasMany(LibraryMovie, {
+    foreignKey: {
+        allowNull: false,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    }
+});
 LibraryMovie.belongsToMany(Profile, { through: ProfileLibraryMovie });
 
 //Movie-Genre
-Movie.belongsToMany(Genre, { through: "movie_genre" });
+Movie.hasMany(Genre, {
+    foreignKey: {
+        allowNull: false,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    }
+});
 Genre.belongsToMany(Movie, { through: "movie_genre" });
 
 //Account-Movie
