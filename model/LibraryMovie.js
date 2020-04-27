@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define("library_movie",
+    const LibraryMovie = sequelize.define("library_movie",
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -37,4 +37,14 @@ module.exports = (sequelize, DataTypes) => {
             freezeTableName: true
         }
     );
+
+    LibraryMovie.beforeCreate(async (libraryMovie) => {
+        //TMDb API
+    });
+
+    LibraryMovie.beforeUpdate(async (libraryMovie) => {
+        //TMDb API
+    });
+
+    return LibraryMovie;
 };

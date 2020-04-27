@@ -6,7 +6,9 @@ const
     AccountModel = require("../model/Account"),
     ProfileModel = require("../model/Profile"),
     LibraryMovieModel = require("../model/LibraryMovie"),
-    ProfileLibraryMovieModel = require("../model/ProfileLibraryMovie");
+    ProfileLibraryMovieModel = require("../model/ProfileLibraryMovie"),
+    GenreModel = require("../model/Genre"),
+    MovieModel = require("../model/Movie");
 
 const
     db_host = process.env.DB_HOST,
@@ -25,7 +27,10 @@ const
     Account = AccountModel(sequelize, Sequelize),
     Profile = ProfileModel(sequelize, Sequelize),
     LibraryMovie = LibraryMovieModel(sequelize, Sequelize),
-    ProfileLibraryMovie = ProfileLibraryMovieModel(sequelize, Sequelize);
+    ProfileLibraryMovie = ProfileLibraryMovieModel(sequelize, Sequelize),
+    Genre = GenreModel(sequelize, Sequelize),
+    Movie = MovieModel(sequelize, Sequelize);
+
 
 // --- Associations ---
 //Account-Profile
@@ -38,9 +43,34 @@ Account.hasMany(Profile, {
 });
 Profile.belongsTo(Account);
 
+//Account-LibraryMovie
+Account.hasMany(LibraryMovie, {
+    foreignKey: {
+        allowNull: false,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    }
+});
+LibraryMovie.belongsTo(Account);
+
 //Profile-LibraryMovie
 Profile.belongsToMany(LibraryMovie, { through: ProfileLibraryMovie });
 LibraryMovie.belongsToMany(Profile, { through: ProfileLibraryMovie });
+
+//Movie-Genre
+Movie.belongsToMany(Genre, { through: "movie_genre" });
+Genre.belongsToMany(Movie, { through: "movie_genre" });
+
+//Account-Movie
+LibraryMovie.hasOne(Movie, {
+    foreignKey: {
+        allowNull: false,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    }
+});
+Movie.belongsTo(LibraryMovie);
+
 
 // --- Cron Jobs ---
 //LibraryMovie (restablecer a 0 views_today todos los días a las 00:00)
@@ -58,10 +88,11 @@ new CronJob("0 0 1 * *", async () => {
     await LibraryMovie.update({ views_last_month: 0 }, { where: {} });
 }).start();
 
+
 sequelize.authenticate()
     .then(() => {
         console.log("DB Connected");
-        sequelize.sync({ force: false }).then(() => {
+        sequelize.sync({ force: true }).then(() => {
             console.log("DB Synced");
         });
     })
@@ -71,5 +102,7 @@ module.exports = {
     Account,
     Profile,
     LibraryMovie,
-    ProfileLibraryMovie
+    ProfileLibraryMovie,
+    Genre,
+    Movie
 };
