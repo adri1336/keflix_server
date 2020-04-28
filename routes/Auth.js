@@ -50,21 +50,20 @@ router.post("/token", async (req, res) => {
         if(!refresh_token) throw "invalid refresh token";
 
         const
-            { id } = jwt.decode(refresh_token),
-            account = await AccountController.get({ id: id });
+            { accountId } = jwt.decode(refresh_token),
+            account = await AccountController.get({ id: accountId });
         
         if(!account) throw "invalid refresh token";
         
         AuthController.verifyRefreshToken(account, refresh_token, (error) => {
             if(error) throw "invalid refresh token";
 
-            const tokens = {
+            const data = {
+                account,
                 token: AuthController.generateAccessToken(account),
                 refresh_token: AuthController.generateRefreshToken(account)
             };
-            if(!tokens) throw "invalid refresh token";
-        
-            res.json(tokens);
+            res.json(data);
         });
     }
     catch(error) {
