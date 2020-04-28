@@ -51,11 +51,11 @@ const createMovie = async (libraryMovie) => {
         });
 
         //trailer yt video
-        response = await fetch("https://api.themoviedb.org/3/movie/" + api_movie.id + "/videos?api_key=" + API_KEY + "&language=" + LANGUAGE);
+        /*response = await fetch("https://api.themoviedb.org/3/movie/" + api_movie.id + "/videos?api_key=" + API_KEY + "&language=" + LANGUAGE);
         const data = await response.json();
         if(data.results && data.results[0].type == "Trailer" && data.results[0].site == "YouTube") {
             movie.trailer_youtube_key = data.results[0].key;
-        }
+        }*/
 
         movie.libraryMovieId = libraryMovie.id;
         movie = await MovieController.create(movie);

@@ -8,12 +8,9 @@ router.use(middlewareRouter);
 
 router.post("/", async (req, res) => {
     try {
-        const
-            { accountId } = req.token,
-            account = await AccountController.get({ id: accountId });
-        
-        if(!account) throw "invalid account";
-        req.body.accountId = accountId;
+        const account = req.account;
+    
+        req.body.accountId = account.id;
         
         let profile = await ProfileController.create(req.body);
         profile.password = undefined;
@@ -27,11 +24,11 @@ router.post("/", async (req, res) => {
 router.post("/:profileId/check_password", async (req, res) => {
     try {
         const
-            { accountId } = req.token, { profileId } = req.params,
-            account = await AccountController.get({ id: accountId });
+            account = req.account,
+            { profileId } = req.params,
             profile = await ProfileController.get({ id: profileId });
         
-        if(!account || !profile || (account.id != profile.accountId)) throw "invalid account or profile id";
+        if(!profile || profile.accountId != account.id) throw "invalid profile id";
 
         const { password } = req.body;
         if(await ProfileController.checkPassword(profile, password)) {
@@ -48,14 +45,9 @@ router.post("/:profileId/check_password", async (req, res) => {
 
 router.get("/", async (req, res) => {
     try {
-        const
-            { accountId } = req.token,
-            account = await AccountController.get({ id: accountId });
+        const account = req.account;
         
-        if(!account) throw "invalid account";
-        req.body.accountId = accountId;
-        
-        let profiles = await ProfileController.getAll({ accountId: accountId });
+        let profiles = await ProfileController.getAll({ accountId: account.id });
         profiles.forEach(profile => profile.password = undefined);
         res.json(profiles);
     }
@@ -67,13 +59,13 @@ router.get("/", async (req, res) => {
 router.put("/:profileId", async (req, res) => {
     try {
         const
-            { accountId } = req.token, { profileId } = req.params,
-            account = await AccountController.get({ id: accountId });
+            account = req.account,
+            { profileId } = req.params,
             profile = await ProfileController.get({ id: profileId });
         
-        if(!account || !profile || (account.id != profile.accountId)) throw "invalid account or profile id";
+        if(!profile || profile.accountId != account.id) throw "invalid profile id";
 
-        const data = await ProfileController.update(req.body, { id:  profileId });
+        const data = await ProfileController.update(req.body, { id: profileId });
         if(!data[0]) throw "invalid id";
         res.json(true);
     }
@@ -85,11 +77,11 @@ router.put("/:profileId", async (req, res) => {
 router.delete("/:profileId", async (req, res) => {
     try {
         const
-            { accountId } = req.token, { profileId } = req.params,
-            account = await AccountController.get({ id: accountId });
+            account = req.account,
+            { profileId } = req.params,
             profile = await ProfileController.get({ id: profileId });
         
-        if(!account || !profile || (account.id != profile.accountId)) throw "invalid account or profile id";
+        if(!profile || profile.accountId != account.id) throw "invalid profile id";
 
         const data = await ProfileController.destroy({ id: req.params.id });
         if(!data) throw "invalid id";

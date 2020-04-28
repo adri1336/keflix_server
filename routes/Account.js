@@ -5,12 +5,14 @@ const AccountController = require("../controller/AccountController");
 const { middlewareRouter } = require("./middleware");
 router.use(middlewareRouter);
 
+router.get("/connection", (req, res) => res.sendStatus(200));
+
 router.post("/check_password", async (req, res) => {
     try {
-        const { password } = req.body;
-        const account = await AccountController.get({ id: req.token.accountId });
-        
-        if(!account) throw "invalid account";
+        const
+            { password } = req.body,
+            account = req.account;
+            
         if(await AccountController.checkPassword(account, password)) {
             res.sendStatus(200);
         }

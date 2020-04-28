@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken");
 const AccountController = require("../controller/AccountController");
 const AuthController = require("../controller/AuthController");
 
+//CON
+router.get("/connection", (req, res) => res.sendStatus(200));
+
 //LOGIN
 router.post("/login", async (req, res) => {
     try {
@@ -27,6 +30,7 @@ router.post("/login", async (req, res) => {
 router.post("/register", async (req, res) => {
     try {
         let account = await AccountController.create(req.body);
+        account = await AccountController.get({ id: account.id }); //es nesario porque obtener la cuenta de la DB porque el valor de updatedAt que devuelve el metodo create no coincide con el de la DB (por milesimas)
         account.password = undefined;
         
         const

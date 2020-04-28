@@ -8,12 +8,10 @@ router.use(middlewareRouter);
 
 router.post("/", async (req, res) => {
     try {
-        const
-            { accountId } = req.token,
-            account = await AccountController.get({ id: accountId });
-
-        if(!account || !account.admin) throw "invalid account";
-        req.body.accountId = accountId;
+        const account = req.account;
+            
+        if(!account.admin) throw "invalid account";
+        req.body.accountId = account.id;
 
         const libraryMovie = await LibraryMovieController.create(req.body);
         res.json(libraryMovie);

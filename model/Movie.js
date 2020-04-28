@@ -54,10 +54,6 @@ module.exports = (sequelize, DataTypes) => {
             vote_average: {
                 type: DataTypes.FLOAT,
                 allowNull: false
-            },
-            trailer_youtube_key: {
-                type: DataTypes.STRING(64),
-                allowNull: true
             }
         },
         {
