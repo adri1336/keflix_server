@@ -42,7 +42,8 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Account.prototype.checkPassword = async function(password) { 
-        return await bcrypt.compare(password, this.password);
+        const result = await bcrypt.compare(password, this.password);
+        return result;
     };
 
     return Account;

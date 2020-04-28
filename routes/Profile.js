@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
         req.body.accountId = account.id;
         
         let profile = await ProfileController.create(req.body);
-        profile.password = undefined;
+        profile.password = profile.password ? "yes" : null;
         res.json(profile);
     }
     catch(error) {
@@ -35,7 +35,7 @@ router.post("/:profileId/check_password", async (req, res) => {
             res.sendStatus(200);
         }
         else {
-            res.sendStatus(403);
+            res.sendStatus(400);
         }
     }
     catch(error) {
@@ -48,7 +48,7 @@ router.get("/", async (req, res) => {
         const account = req.account;
         
         let profiles = await ProfileController.getAll({ accountId: account.id });
-        profiles.forEach(profile => profile.password = undefined);
+        profiles.forEach(profile => profile.password = profile.password ? "yes" : null);
         res.json(profiles);
     }
     catch(error) {
@@ -60,14 +60,17 @@ router.put("/:profileId", async (req, res) => {
     try {
         const
             account = req.account,
-            { profileId } = req.params,
-            profile = await ProfileController.get({ id: profileId });
+            { profileId } = req.params;
+
+        let profile = await ProfileController.get({ id: profileId });
         
         if(!profile || profile.accountId != account.id) throw "invalid profile id";
 
         const data = await ProfileController.update(req.body, { id: profileId });
         if(!data[0]) throw "invalid id";
-        res.json(true);
+
+        profile = await ProfileController.get({ id: profileId });
+        res.json(profile);
     }
     catch(error) {
         res.status(400).json(error);
@@ -83,7 +86,7 @@ router.delete("/:profileId", async (req, res) => {
         
         if(!profile || profile.accountId != account.id) throw "invalid profile id";
 
-        const data = await ProfileController.destroy({ id: req.params.id });
+        const data = await ProfileController.destroy({ id: profileId });
         if(!data) throw "invalid id";
         res.json(true);
     }

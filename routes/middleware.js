@@ -16,7 +16,6 @@ const middlewareRouter = (req, res, next) => {
             const account = await AccountController.get({ id: accountId });
             if(!account || account.updatedAt.getTime() != updatedAt) return res.sendStatus(403);
             
-            account.password = undefined;
             req.account = account;  
             next();
         });
