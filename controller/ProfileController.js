@@ -16,10 +16,22 @@ const getAll = async (where) => {
     });
 };
 
-const update = async (body, where) => {
-    return await Profile.update(body, {
-        where: where
-    });
+const update = async (profile, newProfile) => {
+    const {
+        id,
+        name,
+        password,
+        color,
+        adult_content
+    } = newProfile;
+    
+    profile.id = id;
+    profile.name = name;
+    profile.password = password;
+    profile.color = color;
+    profile.adult_content = adult_content;
+    await profile.save();
+    return profile;
 };
 
 const destroy = async (where) => {

@@ -60,7 +60,7 @@ router.post("/token", async (req, res) => {
 
             const data = {
                 account,
-                token: AuthController.generateAccessToken(account),
+                access_token: AuthController.generateAccessToken(account),
                 refresh_token: AuthController.generateRefreshToken(account)
             };
             res.json(data);

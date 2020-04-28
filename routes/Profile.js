@@ -66,10 +66,7 @@ router.put("/:profileId", async (req, res) => {
         
         if(!profile || profile.accountId != account.id) throw "invalid profile id";
 
-        const data = await ProfileController.update(req.body, { id: profileId });
-        if(!data[0]) throw "invalid id";
-
-        profile = await ProfileController.get({ id: profileId });
+        profile = await profile.update(req.body);
         res.json(profile);
     }
     catch(error) {
