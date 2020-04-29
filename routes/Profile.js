@@ -1,6 +1,5 @@
 const router = require("express").Router();
 const ProfileController = require("../controller/ProfileController");
-const AccountController = require("../controller/AccountController");
 
 //MIDDLEWARE
 const { middlewareRouter } = require("./middleware");
