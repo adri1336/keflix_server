@@ -1,7 +1,130 @@
+require("dotenv").config();
 const router = require("express").Router();
+const jwt = require("jsonwebtoken");
+const path = require("path");
+const fs = require("fs");
 const { Sequelize, Op } = require("sequelize");
+const AccountController = require("../controller/AccountController");
 const MovieController = require("../controller/MovieController");
 const ProfileLibraryMovieController = require("../controller/ProfileLibraryMovieController");
+
+const MEDIA_MOVIES_PATH = path.join(__dirname, "../media/movies/");
+
+const verifyToken = (token, callback) => {
+    if(!token) res.sendStatus(403);
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, callback);
+};
+
+const verifyAccount = async (decoded) => {
+    const { accountId, updatedAt } = decoded;
+    const account = await AccountController.get({ id: accountId });
+    if(!account || account.updatedAt.getTime() != updatedAt) {
+        return false;
+    }
+    return true;
+};
+
+router.get("/:idMovie/trailer.mp4", async (req, res) => {
+    try {
+        const token = req.query.token;
+        verifyToken(token, async (error, decoded) => {
+            if(error) return res.sendStatus(403);
+            if(await verifyAccount(decoded)) {
+                const idMovie = req.params.idMovie;
+                const file = MEDIA_MOVIES_PATH + idMovie + "/trailer.mp4";
+                if(fs.existsSync(file)) {
+                    res.sendFile(file);
+                }
+                else {
+                    res.json("file does not exists");
+                }
+            }
+            else {
+                res.sendStatus(403);
+            }
+        });
+    }
+    catch(error) {
+        res.sendStatus(403);
+    }
+});
+
+////VIDEO////
+
+router.get("/:idMovie/poster.png", async (req, res) => {
+    try {
+        const token = req.query.token;
+        verifyToken(token, async (error, decoded) => {
+            if(error) return res.sendStatus(403);
+            if(await verifyAccount(decoded)) {
+                const idMovie = req.params.idMovie;
+                const file = MEDIA_MOVIES_PATH + idMovie + "/poster.png";
+                if(fs.existsSync(file)) {
+                    res.sendFile(file);
+                }
+                else {
+                    res.json("file does not exists");
+                }
+            }
+            else {
+                res.sendStatus(403);
+            }
+        });
+    }
+    catch(error) {
+        res.sendStatus(403);
+    }
+});
+
+router.get("/:idMovie/backdrop.png", async (req, res) => {
+    try {
+        const token = req.query.token;
+        verifyToken(token, async (error, decoded) => {
+            if(error) return res.sendStatus(403);
+            if(await verifyAccount(decoded)) {
+                const idMovie = req.params.idMovie;
+                const file = MEDIA_MOVIES_PATH + idMovie + "/backdrop.png";
+                if(fs.existsSync(file)) {
+                    res.sendFile(file);
+                }
+                else {
+                    res.json("file does not exists");
+                }
+            }
+            else {
+                res.sendStatus(403);
+            }
+        });
+    }
+    catch(error) {
+        res.sendStatus(403);
+    }
+});
+
+router.get("/:idMovie/logo.png", async (req, res) => {
+    try {
+        const token = req.query.token;
+        verifyToken(token, async (error, decoded) => {
+            if(error) return res.sendStatus(403);
+            if(await verifyAccount(decoded)) {
+                const idMovie = req.params.idMovie;
+                const file = MEDIA_MOVIES_PATH + idMovie + "/logo.png";
+                if(fs.existsSync(file)) {
+                    res.sendFile(file);
+                }
+                else {
+                    res.json("file does not exists");
+                }
+            }
+            else {
+                res.sendStatus(403);
+            }
+        });
+    }
+    catch(error) {
+        res.sendStatus(403);
+    }
+});
 
 //MIDDLEWARE
 const { middlewareRouter } = require("./middleware");
@@ -69,6 +192,19 @@ router.post("/discover", async (req, res) => {
                     final[i].dataValues.profileInfo = profileInfo.dataValues;
                 }   
             }
+        }
+
+        //mediaInfo
+        for(let i = 0; i < final.length; i ++) {
+            const movie = final[i];
+            const mediaInfo = {
+                trailer: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/trailer.mp4"),
+                video: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/video.mp4"),
+                poster: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/poster.png"),
+                backdrop: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/backdrop.png"),
+                logo: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/logo.png")
+            };
+            final[i].dataValues.mediaInfo = mediaInfo;
         }
 
         res.json(final);

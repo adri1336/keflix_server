@@ -59,15 +59,13 @@ const createMovie = async (libraryMovie) => {
         await fs.promises.mkdir(path, { recursive: true });
 
         //poster path
-        let extension = api_movie.poster_path.substr(api_movie.poster_path.length - 3);
-        const posterFile = fs.createWriteStream(path + "/poster." + extension);
+        const posterFile = fs.createWriteStream(path + "/poster.png");
         http.get(TMDB_IMAGES_PATH + api_movie.poster_path, function(response) {
             response.pipe(posterFile);
         });
 
         //backdrop_path
-        extension = api_movie.backdrop_path.substr(api_movie.backdrop_path.length - 3);
-        const backdropFile = fs.createWriteStream(path + "/backdrop." + extension);
+        const backdropFile = fs.createWriteStream(path + "/backdrop.png");
         http.get(TMDB_IMAGES_PATH + api_movie.backdrop_path, function(response) {
             response.pipe(backdropFile);
         });
@@ -77,7 +75,7 @@ const createMovie = async (libraryMovie) => {
         const data = await response.json();
         if(data.results && (data.results[0].type == "Trailer" || data.results[0].type == "Teaser") && data.results[0].site == "YouTube") {
             const youtubeKey = data.results[0].key;
-            const video = youtubedl("http://www.youtube.com/watch?v=" + youtubeKey, ["--format=22"]);
+            const video = youtubedl("http://www.youtube.com/watch?v=" + youtubeKey); //["--format=22"]);
             video.pipe(fs.createWriteStream(path + "/trailer.mp4"));
         }
 
