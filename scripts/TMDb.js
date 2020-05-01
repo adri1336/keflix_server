@@ -1,11 +1,15 @@
 require("dotenv").config();
 const fetch = require("node-fetch");
+const fs = require("fs");
+const http = require("http");
+const youtubedl = require("youtube-dl");
 const GenreController = require("../controller/GenreController");
 const MovieController = require("../controller/MovieController");
 
 const
     API_KEY = process.env.TMDB_API_KEY,
-    LANGUAGE = "es-ES";
+    LANGUAGE = "es-ES",
+    TMDB_IMAGES_PATH = "http://image.tmdb.org/t/p/original";
 
 const refreshGenres = async () => {
     try {
@@ -32,11 +36,9 @@ const createMovie = async (libraryMovie) => {
         let movie = {
             id: api_movie.id,
             adult: api_movie.adult,
-            backdrop_path: api_movie.backdrop_path,
             original_title: api_movie.original_title,
             overview: api_movie.overview,
             popularity: api_movie.popularity,
-            poster_path: api_movie.poster_path,
             release_date: api_movie.release_date,
             runtime: api_movie.runtime,
             tagline: api_movie.tagline,
@@ -50,12 +52,34 @@ const createMovie = async (libraryMovie) => {
             genres.push(api_genre.id);
         });
 
+        //files
+        const path = "./media/movies/" + api_movie.id;
+
+        //crear carpeta
+        await fs.promises.mkdir(path, { recursive: true });
+
+        //poster path
+        let extension = api_movie.poster_path.substr(api_movie.poster_path.length - 3);
+        const posterFile = fs.createWriteStream(path + "/poster." + extension);
+        http.get(TMDB_IMAGES_PATH + api_movie.poster_path, function(response) {
+            response.pipe(posterFile);
+        });
+
+        //backdrop_path
+        extension = api_movie.backdrop_path.substr(api_movie.backdrop_path.length - 3);
+        const backdropFile = fs.createWriteStream(path + "/backdrop." + extension);
+        http.get(TMDB_IMAGES_PATH + api_movie.backdrop_path, function(response) {
+            response.pipe(backdropFile);
+        });
+
         //trailer yt video
-        /*response = await fetch("https://api.themoviedb.org/3/movie/" + api_movie.id + "/videos?api_key=" + API_KEY + "&language=" + LANGUAGE);
+        response = await fetch("https://api.themoviedb.org/3/movie/" + api_movie.id + "/videos?api_key=" + API_KEY + "&language=" + LANGUAGE);
         const data = await response.json();
-        if(data.results && data.results[0].type == "Trailer" && data.results[0].site == "YouTube") {
-            movie.trailer_youtube_key = data.results[0].key;
-        }*/
+        if(data.results && (data.results[0].type == "Trailer" || data.results[0].type == "Teaser") && data.results[0].site == "YouTube") {
+            const youtubeKey = data.results[0].key;
+            const video = youtubedl("http://www.youtube.com/watch?v=" + youtubeKey, ["--format=22"]);
+            video.pipe(fs.createWriteStream(path + "/trailer.mp4"));
+        }
 
         movie.libraryMovieId = libraryMovie.id;
         movie = await MovieController.create(movie);

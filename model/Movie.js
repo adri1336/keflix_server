@@ -15,10 +15,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 allowNull: false
             },
-            backdrop_path: {
-                type: DataTypes.STRING(128),
-                allowNull: true
-            },
             original_title: {
                 type: DataTypes.STRING(128),
                 allowNull: false
@@ -30,10 +26,6 @@ module.exports = (sequelize, DataTypes) => {
             popularity: {
                 type: DataTypes.FLOAT,
                 allowNull: false
-            },
-            poster_path: {
-                type: DataTypes.STRING(128),
-                allowNull: true
             },
             release_date: {
                 type: DataTypes.DATE,

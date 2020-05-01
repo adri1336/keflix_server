@@ -27,6 +27,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.1.0",
     "node-fetch": "^2.6.0",
-    "sequelize": "^5.21.7"
+    "sequelize": "^5.21.7",
+    "youtube-dl": "^3.0.2"
   }
 }
