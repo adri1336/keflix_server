@@ -143,7 +143,7 @@ router.post("/discover", async (req, res) => {
         };
         console.log("where: ", where);
 
-        let order = [["popularity", "DESC"]];
+        let order = [["libraryMovieId", "DESC"]];
         if(req.body.sort_by) {
             order = [req.body.sort_by.split(".")];
         }
