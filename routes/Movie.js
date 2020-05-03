@@ -49,7 +49,30 @@ router.get("/:idMovie/trailer.mp4", async (req, res) => {
     }
 });
 
-////VIDEO////
+router.get("/:idMovie/video.mp4", async (req, res) => {
+    try {
+        const token = req.query.token;
+        verifyToken(token, async (error, decoded) => {
+            if(error) return res.sendStatus(403);
+            if(await verifyAccount(decoded)) {
+                const idMovie = req.params.idMovie;
+                const file = MEDIA_MOVIES_PATH + idMovie + "/video.mp4";
+                if(fs.existsSync(file)) {
+                    res.sendFile(file);
+                }
+                else {
+                    res.json("file does not exists");
+                }
+            }
+            else {
+                res.sendStatus(403);
+            }
+        });
+    }
+    catch(error) {
+        res.sendStatus(403);
+    }
+});
 
 router.get("/:idMovie/poster.png", async (req, res) => {
     try {
