@@ -6,6 +6,10 @@ const youtubedl = require("youtube-dl");
 const GenreController = require("../controller/GenreController");
 const MovieController = require("../controller/MovieController");
 
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+const ffmpeg = require('fluent-ffmpeg');
+ffmpeg.setFfmpegPath(ffmpegPath);
+
 const
     API_KEY = process.env.TMDB_API_KEY,
     LANGUAGE = "es-ES",
@@ -56,7 +60,7 @@ const createMovie = async (libraryMovie) => {
         const path = "./media/movies/" + api_movie.id;
 
         //crear carpeta
-        await fs.promises.mkdir(path, { recursive: true });
+        await fs.promises.mkdir(path + "/tmp", { recursive: true });
 
         //poster path
         const posterFile = fs.createWriteStream(path + "/poster.png");
@@ -78,8 +82,9 @@ const createMovie = async (libraryMovie) => {
                 const result = data.results[i];
                 if(result.type && result.site && (result.type == "Trailer" || result.type == "Teaser") && result.site == "YouTube") {
                     const youtubeKey = result.key;
-                    const video = youtubedl("http://www.youtube.com/watch?v=" + youtubeKey); //["--format=22"]);
-                    video.pipe(fs.createWriteStream(path + "/trailer.mp4"));
+                    /*const video = youtubedl("http://www.youtube.com/watch?v=" + youtubeKey, ["-f", "bestvideo+bestaudio"]); //["--format=22"]);
+                    video.pipe(fs.createWriteStream(path + "/trailer.mkv"));*/
+                    downloadYoutubeTrailer(youtubeKey, path);
                     break;
                 }
             }
@@ -93,6 +98,30 @@ const createMovie = async (libraryMovie) => {
         console.log("TMDb Script Error (createMovie): ", error);
     }
 };
+
+function downloadYoutubeTrailer(youtubeKey, path) {
+    try {
+        tmp_path = path + "/tmp";
+        youtubedl.exec("http://www.youtube.com/watch?v=" + youtubeKey, ["-f", "bestvideo", "-o", tmp_path + "/trailer.video"], {}, function(error, output1) {
+            if(error) throw error;
+            youtubedl.exec("http://www.youtube.com/watch?v=" + youtubeKey, ["-f", "bestaudio", "-o", tmp_path + "/trailer.audio"], {}, function(error2, output2) {
+                if(error2) throw error2;
+                //convertir
+                ffmpeg(tmp_path + "/trailer.video")
+                    .addInput(tmp_path + "/trailer.audio")
+                    .output(tmp_path + "/trailer.mp4")
+                    .on("end", async function() {
+                        await fs.promises.rename(tmp_path + "/trailer.mp4", path + "/trailer.mp4");
+                        fs.rmdirSync(tmp_path, { recursive: true });
+                    })
+                    .run();
+            });
+        });
+    }
+    catch(error) {
+        console.log(error);
+    }
+}
 
 module.exports = {
     refreshGenres,
