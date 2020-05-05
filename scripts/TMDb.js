@@ -78,14 +78,24 @@ const createMovie = async (libraryMovie) => {
         response = await fetch("https://api.themoviedb.org/3/movie/" + api_movie.id + "/videos?api_key=" + API_KEY + "&language=" + LANGUAGE);
         const data = await response.json();
         if(data.results) {
+            let youtubeKey = null;
             for(let i = 0; i < data.results.length; i++) {
                 const result = data.results[i];
-                if(result.type && result.site && (result.type == "Trailer" || result.type == "Teaser") && result.site == "YouTube") {
-                    const youtubeKey = result.key;
-                    /*const video = youtubedl("http://www.youtube.com/watch?v=" + youtubeKey, ["-f", "bestvideo+bestaudio"]); //["--format=22"]);
-                    video.pipe(fs.createWriteStream(path + "/trailer.mkv"));*/
+                if(result.type && result.site && result.type == "Trailer" && result.site == "YouTube") {
+                    youtubeKey = result.key;
                     downloadYoutubeTrailer(youtubeKey, path);
                     break;
+                }
+            }
+
+            if(!youtubeKey) {
+                for(let i = 0; i < data.results.length; i++) {
+                    const result = data.results[i];
+                    if(result.type && result.site && result.type == "Teaser" && result.site == "YouTube") {
+                        youtubeKey = result.key;
+                        downloadYoutubeTrailer(youtubeKey, path);
+                        break;
+                    }
                 }
             }
         }
