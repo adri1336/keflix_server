@@ -6,6 +6,11 @@ const get = async (where) => {
     });
 };
 
+const upsert = async (body) => {
+    return await ProfileLibraryMovie.upsert(body);
+};
+
 module.exports = {
-    get
+    get,
+    upsert
 };
