@@ -6,9 +6,10 @@ const get = async (where) => {
     });
 };
 
-const getAll = async (where) => {
+const getAll = async (where, order) => {
     return await ProfileLibraryMovie.findAll({
-        where: where
+        where: where,
+        order: order
     });
 };
 
