@@ -9,6 +9,12 @@ const create = async (body) => {
     return await Movie.create(body);
 };
 
+const get = async (where) => {
+    return await Movie.findOne({
+        where: where
+    });
+};
+
 const getAll = async (where, order, limit, offset) => {
     return await Movie.findAll({
         where: where,
@@ -94,22 +100,28 @@ const getMovies = async (options) => {
     //mediaInfo
     for(let i = 0; i < final.length; i ++) {
         const movie = final[i];
-        const mediaInfo = {
-            trailer: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/trailer.mp4"),
-            video: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/video.mp4"),
-            poster: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/poster.png"),
-            backdrop: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/backdrop.png"),
-            logo: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/logo.png")
-        };
+        const mediaInfo = getMovieMediaInfo(movie.id);
         final[i].dataValues.mediaInfo = mediaInfo;
     }
 
     return final;
 }
 
+const getMovieMediaInfo = (id) => {
+    return {
+        trailer: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/trailer.mp4"),
+        video: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/video.mp4"),
+        poster: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/poster.png"),
+        backdrop: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/backdrop.png"),
+        logo: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/logo.png")
+    };
+}
+
 module.exports = {
     create,
+    get,
     getAll,
     destroy,
-    getMovies
+    getMovies,
+    getMovieMediaInfo
 };
