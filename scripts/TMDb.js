@@ -57,7 +57,7 @@ const createMovie = async (libraryMovie) => {
         });
 
         //files
-        const path = "./media/movies/" + api_movie.id;
+        const path = process.env.MEDIA_MOVIES_PATH + api_movie.id;
 
         //crear carpeta
         await fs.promises.mkdir(path + "/tmp", { recursive: true });

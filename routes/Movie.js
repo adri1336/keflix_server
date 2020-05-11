@@ -8,8 +8,6 @@ const AccountController = require("../controller/AccountController");
 const MovieController = require("../controller/MovieController");
 const ProfileLibraryMovieController = require("../controller/ProfileLibraryMovieController");
 
-const MEDIA_MOVIES_PATH = path.join(__dirname, "../media/movies/");
-
 const verifyToken = (token, callback) => {
     if(!token) res.sendStatus(403);
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, callback);
@@ -31,7 +29,7 @@ router.get("/:idMovie/trailer.mp4", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = MEDIA_MOVIES_PATH + idMovie + "/trailer.mp4";
+                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/trailer.mp4";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -56,7 +54,7 @@ router.get("/:idMovie/video.mp4", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = MEDIA_MOVIES_PATH + idMovie + "/video.mp4";
+                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/video.mp4";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -81,7 +79,7 @@ router.get("/:idMovie/poster.png", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = MEDIA_MOVIES_PATH + idMovie + "/poster.png";
+                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/poster.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -106,7 +104,7 @@ router.get("/:idMovie/backdrop.png", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = MEDIA_MOVIES_PATH + idMovie + "/backdrop.png";
+                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/backdrop.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -131,7 +129,7 @@ router.get("/:idMovie/logo.png", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = MEDIA_MOVIES_PATH + idMovie + "/logo.png";
+                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/logo.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -221,11 +219,11 @@ router.post("/discover", async (req, res) => {
         for(let i = 0; i < final.length; i ++) {
             const movie = final[i];
             const mediaInfo = {
-                trailer: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/trailer.mp4"),
-                video: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/video.mp4"),
-                poster: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/poster.png"),
-                backdrop: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/backdrop.png"),
-                logo: fs.existsSync(MEDIA_MOVIES_PATH + movie.id + "/logo.png")
+                trailer: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/trailer.mp4"),
+                video: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/video.mp4"),
+                poster: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/poster.png"),
+                backdrop: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/backdrop.png"),
+                logo: fs.existsSync(process.env.MEDIA_MOVIES_PATH + movie.id + "/logo.png")
             };
             final[i].dataValues.mediaInfo = mediaInfo;
         }
