@@ -151,6 +151,7 @@ router.use(middlewareRouter);
 router.post("/discover", async (req, res) => {
     try {
         const movies = await MovieController.getMovies({
+            search: req.body.search,
             include_adult: req.body.include_adult,
             year: req.body.year,
             include_no_published: req.body.include_no_published,

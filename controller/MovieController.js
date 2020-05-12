@@ -38,6 +38,18 @@ const destroy = async (where) => {
 
 const getMovies = async (options) => {
     const where = {
+        [Op.or]: [
+            {
+                title: {
+                    [Op.like]: options.search ? "%" + options.search + "%" : "%"
+                }
+            },
+            {
+                original_title: {
+                    [Op.like]: options.search ? "%" + options.search + "%" : "%"
+                }
+            }
+        ],
         adult: {
             [Op.or]: options.include_adult ? [true, false] : [false]
         },
