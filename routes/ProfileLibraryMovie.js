@@ -35,7 +35,7 @@ router.get("/:profileId/favs", async (req, res) => {
         if(!profile || profile.accountId != account.id) throw "invalid profile id";
 
         let favs = [];
-        const results = await ProfileLibraryMovieController.getAll({ profileId: profileId, fav: true }, [["updatedAt", "ASC"]]);
+        const results = await ProfileLibraryMovieController.getAll({ profileId: profileId, fav: true });
         for (let index = 0; index < results.length; index++) {
             const result = results[index];
             let movie = await MovieController.get({ libraryMovieId: result.libraryMovieId });
