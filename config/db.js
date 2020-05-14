@@ -1,6 +1,5 @@
-require("dotenv").config();
 const Sequelize = require("sequelize");
-const CronJob = require('cron').CronJob;
+const CronJob = require("cron").CronJob;
 
 const
     AccountModel = require("../model/Account"),
@@ -10,18 +9,13 @@ const
     GenreModel = require("../model/Genre"),
     MovieModel = require("../model/Movie");
 
-const
-    db_host = process.env.DB_HOST,
-    db_name = process.env.DB_NAME,
-    db_user = process.env.DB_USER,
-    db_pass = process.env.DB_PASS,
-    db_port = process.env.DB_PORT;
-
-const sequelize = new Sequelize(db_name, db_user, db_pass, {
-    host: db_host,
-    port: db_port,
-    dialect: "mysql"
-});
+const sequelize = new Sequelize(
+    {
+        dialect: "sqlite",
+        storage: "database.sqlite",
+        logging: false
+    }
+);
 
 const
     Account = AccountModel(sequelize, Sequelize),
@@ -91,12 +85,30 @@ new CronJob("0 0 1 * *", async () => {
 
 sequelize.authenticate()
     .then(() => {
-        console.log("DB Connected");
+        console.log("OK! Base de datos conectada");
         sequelize.sync({ force: false }).then(() => {
-            console.log("DB Synced");
+            console.log("OK! Base de datos sincronizada:");
+            printDbInfo();
         });
     })
-    .catch(error => console.log("DB Connection Error: ", error));
+    .catch(error => {
+        console.log("Error! No se pudo conectar con la base de datos: ", error);
+        console.log = function() {};
+    });
+
+async function printDbInfo() {
+    let count = 0;
+    count = await Account.count();
+    console.log("\tCuentas: " + count);
+
+    count = await Profile.count();
+    console.log("\tPerfiles: " + count);
+
+    count = await Movie.count();
+    console.log("\tPelículas: " + count);
+
+    console.log = function() {};
+}
 
 module.exports = {
     Account,

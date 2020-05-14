@@ -1,5 +1,6 @@
 media/
 *.out
+*.sqlite
 
 # Logs
 logs
