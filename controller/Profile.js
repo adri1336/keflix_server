@@ -17,21 +17,14 @@ const getAll = async (where) => {
 };
 
 const update = async (profile, newProfile) => {
-    const {
-        id,
-        name,
-        password,
-        color,
-        adult_content
-    } = newProfile;
-    
-    profile.id = id;
-    profile.name = name;
-    profile.password = password;
-    profile.color = color;
-    profile.adult_content = adult_content;
+    for(let property in newProfile) {
+        if(property in profile) {
+            profile[property] = newProfile[property];
+        }
+    } 
+
     await profile.save();
-    return profile;
+    return genre;
 };
 
 const destroy = async (where) => {

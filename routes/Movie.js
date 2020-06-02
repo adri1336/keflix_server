@@ -2,8 +2,8 @@ require("dotenv").config();
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
-const AccountController = require("../controller/AccountController");
-const MovieController = require("../controller/MovieController");
+const AccountController = require("../controller/Account");
+const MovieController = require("../controller/Movie");
 
 const verifyToken = (token, callback) => {
     if(!token) res.sendStatus(403);
@@ -26,7 +26,7 @@ router.get("/:idMovie/trailer.mp4", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/trailer.mp4";
+                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/trailer.mp4";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -51,7 +51,7 @@ router.get("/:idMovie/video.mp4", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/video.mp4";
+                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/video.mp4";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -76,7 +76,7 @@ router.get("/:idMovie/poster.png", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/poster.png";
+                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/poster.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -101,7 +101,7 @@ router.get("/:idMovie/backdrop.png", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/backdrop.png";
+                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/backdrop.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -126,7 +126,7 @@ router.get("/:idMovie/logo.png", async (req, res) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
                 const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_MOVIES_PATH + idMovie + "/logo.png";
+                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/logo.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -147,6 +147,21 @@ router.get("/:idMovie/logo.png", async (req, res) => {
 //MIDDLEWARE
 const { middlewareRouter } = require("./middleware");
 router.use(middlewareRouter);
+
+router.post("/", async (req, res) => {
+    try {
+        const account = req.account;
+            
+        if(!account.admin) throw "invalid account";
+        req.body.accountId = account.id;
+
+        const movie = await MovieController.create(req.body);
+        res.json(movie);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
 
 router.post("/discover", async (req, res) => {
     try {

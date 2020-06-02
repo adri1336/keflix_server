@@ -4,8 +4,15 @@ const create = async (body) => {
     return await Genre.create(body);
 };
 
-const upsert = async (body) => {
-    return await Genre.upsert(body);
+const update = async (genre, newGenre) => {
+    for(let property in newGenre) {
+        if(property in genre) {
+            genre[property] = newGenre[property];
+        }
+    } 
+
+    await genre.save();
+    return genre;
 };
 
 const destroy = async (where) => {
@@ -16,6 +23,6 @@ const destroy = async (where) => {
 
 module.exports = {
     create,
-    upsert,
+    update,
     destroy
 };

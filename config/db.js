@@ -1,11 +1,11 @@
+require("dotenv").config();
 const Sequelize = require("sequelize");
 const CronJob = require("cron").CronJob;
 
 const
     AccountModel = require("../model/Account"),
     ProfileModel = require("../model/Profile"),
-    LibraryMovieModel = require("../model/LibraryMovie"),
-    ProfileLibraryMovieModel = require("../model/ProfileLibraryMovie"),
+    ProfileMovieModel = require("../model/ProfileMovie"),
     GenreModel = require("../model/Genre"),
     MovieModel = require("../model/Movie");
 
@@ -13,15 +13,15 @@ const sequelize = new Sequelize(
     {
         dialect: "sqlite",
         storage: "database.sqlite",
-        logging: false
+        logging: process.env.DEBUG_ENABLED ? console.log : false,
+        force: process.env.FORCE_DATABASE_SYNC ? true : false
     }
 );
 
 const
     Account = AccountModel(sequelize, Sequelize),
     Profile = ProfileModel(sequelize, Sequelize),
-    LibraryMovie = LibraryMovieModel(sequelize, Sequelize),
-    ProfileLibraryMovie = ProfileLibraryMovieModel(sequelize, Sequelize),
+    ProfileMovie = ProfileMovieModel(sequelize, Sequelize),
     Genre = GenreModel(sequelize, Sequelize),
     Movie = MovieModel(sequelize, Sequelize);
 
@@ -37,49 +37,49 @@ Account.hasMany(Profile, {
 });
 Profile.belongsTo(Account);
 
-//Account-LibraryMovie
-Account.hasMany(LibraryMovie, {
+//Account-Movie
+Account.hasMany(Movie, {
     foreignKey: {
-        allowNull: false,
+        allowNull: true, //posibilidad de añadir pelicula sin cuenta (manualmente, no recomendado)
         onDelete: "CASCADE",
         onUpdate: "CASCADE"
     }
 });
-LibraryMovie.belongsTo(Account);
+Movie.belongsTo(Account);
 
-//Profile-LibraryMovie
-Profile.belongsToMany(LibraryMovie, { through: ProfileLibraryMovie });
-LibraryMovie.belongsToMany(Profile, { through: ProfileLibraryMovie });
+//Account-Genre
+Account.hasMany(Genre, {
+    foreignKey: {
+        allowNull: true, //posibilidad de añadir género sin cuenta (manualmente, no recomendado)
+        onDelete: "SET NULL",
+        onUpdate: "CASCADE"
+    }
+});
+Genre.belongsTo(Account);
+
+//Profile-Movie
+Profile.belongsToMany(Movie, { through: ProfileMovie });
+Movie.belongsToMany(Profile, { through: ProfileMovie });
 
 //Movie-Genre
 Movie.belongsToMany(Genre, { through: "movie_genre" });
 Genre.belongsToMany(Movie, { through: "movie_genre" });
 
-//Account-Movie
-LibraryMovie.hasOne(Movie, {
-    foreignKey: {
-        allowNull: false,
-        onDelete: "CASCADE",
-        onUpdate: "CASCADE"
-    }
-});
-Movie.belongsTo(LibraryMovie);
-
 
 // --- Cron Jobs ---
-//LibraryMovie (restablecer a 0 views_today todos los días a las 00:00)
+//Movie (restablecer a 0 views_today todos los días a las 00:00)
 new CronJob("0 0 * * *", async () => {
-    await LibraryMovie.update({ views_today: 0 }, { where: {} });
+    await Movie.update({ views_today: 0 }, { where: {} });
 }).start();
 
-//LibraryMovie (restablecer a 0 views_last_week todos los lunes a las 00:00)
+//Movie (restablecer a 0 views_last_week todos los lunes a las 00:00)
 new CronJob("0 0 * * 1", async () => {
-    await LibraryMovie.update({ views_last_week: 0 }, { where: {} });
+    await Movie.update({ views_last_week: 0 }, { where: {} });
 }).start();
 
-//LibraryMovie (restablecer a 0 views_last_month el primer día del mes a las 00:00)
+//Movie (restablecer a 0 views_last_month el primer día del mes a las 00:00)
 new CronJob("0 0 1 * *", async () => {
-    await LibraryMovie.update({ views_last_month: 0 }, { where: {} });
+    await Movie.update({ views_last_month: 0 }, { where: {} });
 }).start();
 
 
@@ -107,14 +107,15 @@ async function printDbInfo() {
     count = await Movie.count();
     console.log("\tPelículas: " + count);
 
-    console.log = function() {};
+    if(!process.env.DEBUG_ENABLED) {
+        console.log = function() {};
+    }
 }
 
 module.exports = {
     Account,
     Profile,
-    LibraryMovie,
-    ProfileLibraryMovie,
+    ProfileMovie,
     Genre,
     Movie
 };

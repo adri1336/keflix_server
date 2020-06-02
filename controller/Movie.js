@@ -1,7 +1,7 @@
 require("dotenv").config();
 const { Movie } = require("../config/db");
 const { Genre } = require("../config/db");
-const ProfileLibraryMovieController = require("../controller/ProfileLibraryMovieController");
+const ProfileMovieController = require("../controller/ProfileMovie");
 const { Sequelize, Op } = require("sequelize");
 const fs = require("fs");
 
@@ -59,7 +59,7 @@ const getMovies = async (options) => {
         }
     };
 
-    let order = [["libraryMovieId", "DESC"]];
+    let order = [["movieId", "DESC"]];
     if(options.sort_by) {
         order = [options.sort_by.split(".")];
     }
@@ -99,8 +99,8 @@ const getMovies = async (options) => {
         const profileId = options.profile_id;
         for(let i = 0; i < final.length; i ++) {
             const movie = final[i];
-            const profileInfo = await ProfileLibraryMovieController.get({
-                libraryMovieId: movie.libraryMovieId,
+            const profileInfo = await ProfileMovieController.get({
+                movieId: movie.movieId,
                 profileId: profileId
             });
             if(profileInfo) {
@@ -121,11 +121,11 @@ const getMovies = async (options) => {
 
 const getMovieMediaInfo = (id) => {
     return {
-        trailer: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/trailer.mp4"),
-        video: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/video.mp4"),
-        poster: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/poster.png"),
-        backdrop: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/backdrop.png"),
-        logo: fs.existsSync(process.env.MEDIA_MOVIES_PATH + id + "/logo.png")
+        trailer: fs.existsSync(process.env.MEDIA_PATH + "/movies/" + id + "/trailer.mp4"),
+        video: fs.existsSync(process.env.MEDIA_PATH + "/movies/" + id + "/video.mp4"),
+        poster: fs.existsSync(process.env.MEDIA_PATH + "/movies/" + id + "/poster.png"),
+        backdrop: fs.existsSync(process.env.MEDIA_PATH + "/movies/" + id + "/backdrop.png"),
+        logo: fs.existsSync(process.env.MEDIA_PATH + "/movies/" + id + "/logo.png")
     };
 }
 

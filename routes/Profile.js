@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const ProfileController = require("../controller/ProfileController");
+const ProfileController = require("../controller/Profile");
 
 //MIDDLEWARE
 const { middlewareRouter } = require("./middleware");
@@ -65,7 +65,7 @@ router.put("/:profileId", async (req, res) => {
         
         if(!profile || profile.accountId != account.id) throw "invalid profile id";
 
-        profile = await profile.update(req.body);
+        profile = await ProfileController.update(profile, req.body);
         res.json(profile);
     }
     catch(error) {

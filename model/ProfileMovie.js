@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define("profile_library_movie",
+    return sequelize.define("profile_movie",
         {
             completed: {
                 type: DataTypes.BOOLEAN,

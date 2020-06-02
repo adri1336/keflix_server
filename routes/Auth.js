@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
-const AccountController = require("../controller/AccountController");
-const AuthController = require("../controller/AuthController");
+const AccountController = require("../controller/Account");
+const AuthController = require("../controller/Auth");
 
 //CON
 router.get("/connection", (req, res) => res.sendStatus(200));

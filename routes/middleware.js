@@ -1,6 +1,6 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const AccountController = require("../controller/AccountController");
+const AccountController = require("../controller/Account");
 
 const middlewareRouter = (req, res, next) => {
     try {
