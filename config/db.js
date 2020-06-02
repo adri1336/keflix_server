@@ -1,6 +1,9 @@
 require("dotenv").config();
 const Sequelize = require("sequelize");
 const CronJob = require("cron").CronJob;
+const readline = require("readline");
+const ioHook = require("iohook");
+let creatingAccount = false;
 
 const
     AccountModel = require("../model/Account"),
@@ -86,14 +89,54 @@ new CronJob("0 0 1 * *", async () => {
 sequelize.authenticate()
     .then(() => {
         console.log("OK! Base de datos conectada");
-        sequelize.sync({ force: false }).then(() => {
+        sequelize.sync({ force: false }).then(async () => {
             console.log("OK! Base de datos sincronizada:");
-            printDbInfo();
+            await printDbInfo();
+
+            if(process.env.DEBUG_ENABLED) {
+                const KEY = "K";
+                ioHook.on("keyup", event => {
+                    if(!creatingAccount && event.rawcode == KEY.charCodeAt(0)) {
+                        console.clear();
+                        creatingAccount = true;
+                        
+                        const rl = readline.createInterface({
+                            input: process.stdin,
+                            output: process.stdout,
+                            terminal: false,
+                            console: false
+                        });
+
+                        rl.question("Introduce correo electrónico: ", email => {
+                            rl.question("Introduce contraseña: ", async password => {
+                                rl.close();
+                                const account = await Account.create({ email: email, password: password, admin: true });
+                                if(account) {
+                                    console.log("OK! Cuenta creada, ID: " + account.id);
+                                }
+                                else {
+                                    console.log("Error! No se pudo crear la cuenta");
+                                }
+                                creatingAccount = false;
+                            });
+                        });
+                    }
+                });
+                ioHook.start();
+
+                console.log("\n\n\nATENCIÓN: Modo depuración activado, presiona " + KEY + " para crear una cuenta con derechos de administrador.");
+            }
+
+            if(!process.env.DEBUG_ENABLED) {
+                console.log = function() {};
+            }
         });
     })
     .catch(error => {
         console.log("Error! No se pudo conectar con la base de datos: ", error);
-        console.log = function() {};
+        if(!process.env.DEBUG_ENABLED) {
+            console.log = function() {};
+        }
     });
 
 async function printDbInfo() {
@@ -106,10 +149,6 @@ async function printDbInfo() {
 
     count = await Movie.count();
     console.log("\tPelículas: " + count);
-
-    if(!process.env.DEBUG_ENABLED) {
-        console.log = function() {};
-    }
 }
 
 module.exports = {
