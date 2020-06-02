@@ -80,7 +80,9 @@ router.delete("/:profileId", async (req, res) => {
             { profileId } = req.params,
             profile = await ProfileController.get({ id: profileId });
         
-        if(!profile || profile.accountId != account.id) throw "invalid profile id";
+        if(!account.admin) {
+            if(!profile || profile.accountId != account.id) throw "invalid profile id";
+        }
 
         const data = await ProfileController.destroy({ id: profileId });
         if(!data) throw "invalid id";

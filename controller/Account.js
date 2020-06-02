@@ -10,6 +10,12 @@ const get = async (where) => {
     });
 };
 
+const destroy = async (where) => {
+    return await Profile.destroy({
+        where: where
+    });
+};
+
 const checkPassword = async (account, password) => {
     return await account.checkPassword(password);
 };
@@ -17,5 +23,6 @@ const checkPassword = async (account, password) => {
 module.exports = {
     create,
     get,
+    destroy,
     checkPassword
 };

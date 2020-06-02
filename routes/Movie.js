@@ -19,14 +19,14 @@ const verifyAccount = async (decoded) => {
     return true;
 };
 
-router.get("/:idMovie/trailer.mp4", async (req, res) => {
+router.get("/:movieId/trailer.mp4", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
-                const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/trailer.mp4";
+                const movieId = req.params.movieId;
+                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/trailer.mp4";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -44,14 +44,14 @@ router.get("/:idMovie/trailer.mp4", async (req, res) => {
     }
 });
 
-router.get("/:idMovie/video.mp4", async (req, res) => {
+router.get("/:movieId/video.mp4", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
-                const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/video.mp4";
+                const movieId = req.params.movieId;
+                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/video.mp4";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -69,14 +69,14 @@ router.get("/:idMovie/video.mp4", async (req, res) => {
     }
 });
 
-router.get("/:idMovie/poster.png", async (req, res) => {
+router.get("/:movieId/poster.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
-                const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/poster.png";
+                const movieId = req.params.movieId;
+                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/poster.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -94,14 +94,14 @@ router.get("/:idMovie/poster.png", async (req, res) => {
     }
 });
 
-router.get("/:idMovie/backdrop.png", async (req, res) => {
+router.get("/:movieId/backdrop.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
-                const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/backdrop.png";
+                const movieId = req.params.movieId;
+                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/backdrop.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -119,14 +119,14 @@ router.get("/:idMovie/backdrop.png", async (req, res) => {
     }
 });
 
-router.get("/:idMovie/logo.png", async (req, res) => {
+router.get("/:movieId/logo.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             if(error) return res.sendStatus(403);
             if(await verifyAccount(decoded)) {
-                const idMovie = req.params.idMovie;
-                const file = process.env.MEDIA_PATH + "/movies/" + idMovie + "/logo.png";
+                const movieId = req.params.movieId;
+                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/logo.png";
                 if(fs.existsSync(file)) {
                     res.sendFile(file);
                 }
@@ -178,6 +178,23 @@ router.post("/discover", async (req, res) => {
             profile_id: req.body.profile_id
         });
         res.json(movies);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
+router.delete("/:movieId", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { movieId } = req.params;
+
+        if(!account.admin) throw "invalid account";
+        
+        const data = await MovieController.destroy({ id: movieId });
+        if(!data) throw "invalid id";
+        res.json(true);
     }
     catch(error) {
         res.status(400).json(error);

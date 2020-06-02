@@ -43,11 +43,8 @@ router.delete("/:genreId", async (req, res) => {
             account = req.account,
             { genreId } = req.params;
 
-        if(!account.admin) throw "invalid account";            
-
-        let genre = await GenreController.get({ id: genreId });
-        if(!genre) throw "invalid genre id";
-
+        if(!account.admin) throw "invalid account";
+        
         const data = await GenreController.destroy({ id: genreId });
         if(!data) throw "invalid id";
         res.json(true);
