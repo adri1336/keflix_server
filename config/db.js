@@ -15,8 +15,8 @@ const sequelize = new Sequelize(
     {
         dialect: "sqlite",
         storage: "database.sqlite",
-        logging: process.env.DEBUG_ENABLED ? console.log : false,
-        force: process.env.FORCE_DATABASE_SYNC ? true : false
+        logging: process.env.DATABASE_LOGGING == true ? console.log : false,
+        force: process.env.FORCE_DATABASE_SYNC == true ? true : false
     }
 );
 
@@ -92,7 +92,7 @@ sequelize.authenticate()
             console.log("OK! Base de datos sincronizada:");
             await printDbInfo();
 
-            if(process.env.DEBUG_ENABLED) {
+            if(process.env.DEBUG_ENABLED == true) {
                 const KEY = "k";
                 const rl = readline.createInterface({
                     input: process.stdin,
@@ -121,17 +121,16 @@ sequelize.authenticate()
                     }
                 });
 
-                console.log("\n\n\nATENCIÓN: Modo depuración activado, presiona " + KEY.toUpperCase() + " para crear una cuenta con derechos de administrador.");
+                console.log("\n\n\nATENCIÓN: Modo depuración activado, presiona " + KEY.toUpperCase() + " para crear una cuenta con derechos de administrador.\n\n");
             }
-
-            if(!process.env.DEBUG_ENABLED) {
+            else {
                 console.log = function() {};
             }
         });
     })
     .catch(error => {
         console.log("Error! No se pudo conectar con la base de datos: ", error);
-        if(!process.env.DEBUG_ENABLED) {
+        if(!(process.env.DEBUG_ENABLED == true)) {
             console.log = function() {};
         }
     });

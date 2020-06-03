@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
+console.clear();
 console.log("--- KEFLIX SERVER " + pjson.version + " ---\nDesarrollado por: adri1 (https://github.com/adri1samp/)\n");
 if(
     process.env.APP_PORT &&
@@ -34,5 +35,8 @@ else {
         \t REFRESH_TOKEN_SECRET\n\
         \t REFRESH_TOKEN_EXPIRES_IN\n\
         \t MEDIA_PATH\n\
+        \t DEBUG_ENABLED (opcional)\n\
+        \t DATABASE_LOGGING (opcional)\n\
+        \t FORCE_DATABASE_SYNC (opcional)\n\
     ");
 }
