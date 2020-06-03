@@ -5,6 +5,10 @@ const fs = require("fs");
 const AccountController = require("../controller/Account");
 const MovieController = require("../controller/Movie");
 
+//MIDDLEWARE
+const { middleware, protectedMiddleware } = require("./middleware");
+router.use(middleware);
+
 const verifyToken = (token, callback) => {
     if(!token) res.sendStatus(403);
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, callback);
@@ -145,8 +149,7 @@ router.get("/:movieId/logo.png", async (req, res) => {
 });
 
 //MIDDLEWARE
-const { middlewareRouter } = require("./middleware");
-router.use(middlewareRouter);
+router.use(protectedMiddleware);
 
 router.post("/", async (req, res) => {
     try {

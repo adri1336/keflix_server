@@ -2,7 +2,28 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const AccountController = require("../controller/Account");
 
-const middlewareRouter = (req, res, next) => {
+function setDefaultHeaders(res) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Accept, Content-Type, Authorization");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS");
+}
+
+const middleware = (req, res, next) => {
+    setDefaultHeaders(res);
+    if(req.method == "OPTIONS") {
+        res.sendStatus(200);
+        return;
+    }
+    next();
+};
+
+const protectedMiddleware = (req, res, next) => {
+    setDefaultHeaders(res);
+    if(req.method == "OPTIONS") {
+        res.sendStatus(200);
+        return;
+    }
+
     try {
         const authHeader = req.headers["authorization"];
         const token = authHeader && authHeader.split(" ")[1];
@@ -26,5 +47,6 @@ const middlewareRouter = (req, res, next) => {
 };
 
 module.exports = {
-    middlewareRouter
+    middleware,
+    protectedMiddleware
 };

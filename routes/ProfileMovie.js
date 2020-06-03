@@ -4,8 +4,8 @@ const ProfileMovieController = require("../controller/ProfileMovie");
 const MovieController = require("../controller/Movie");
 
 //MIDDLEWARE
-const { middlewareRouter } = require("./middleware");
-router.use(middlewareRouter);
+const { protectedMiddleware } = require("./middleware");
+router.use(protectedMiddleware);
 
 router.post("/", async (req, res) => {
     try {

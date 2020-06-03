@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 const AccountController = require("../controller/Account");
 const AuthController = require("../controller/Auth");
 
+//MIDDLEWARE
+const { middleware } = require("./middleware");
+router.use(middleware);
+
 //CON
 router.get("/connection", (req, res) => res.sendStatus(200));
 

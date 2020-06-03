@@ -8,8 +8,8 @@ const GenreController = require("../controller/Genre");
 const MovieController = require("../controller/Movie");
 
 //MIDDLEWARE
-const { middlewareRouter } = require("./middleware");
-router.use(middlewareRouter);
+const { protectedMiddleware } = require("./middleware");
+router.use(protectedMiddleware);
 
 router.get("/", (req, res) => {
     const account = req.account;
@@ -21,6 +21,7 @@ router.get("/", (req, res) => {
     //system
     info.system = {};
     info.system.platform = os.platform();
+    info.system.media_path = process.env.MEDIA_PATH;
 
     diskusage(process.env.MEDIA_PATH, (error, usage) => {
         if(!error) {

@@ -2,8 +2,8 @@ const router = require("express").Router();
 const AccountController = require("../controller/Account");
 
 //MIDDLEWARE
-const { middlewareRouter } = require("./middleware");
-router.use(middlewareRouter);
+const { protectedMiddleware } = require("./middleware");
+router.use(protectedMiddleware);
 
 router.get("/", (req, res) => {
     const account = req.account;

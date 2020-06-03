@@ -2,8 +2,8 @@ const router = require("express").Router();
 const GenreController = require("../controller/Genre");
 
 //MIDDLEWARE
-const { middlewareRouter } = require("./middleware");
-router.use(middlewareRouter);
+const { protectedMiddleware } = require("./middleware");
+router.use(protectedMiddleware);
 
 router.post("/", async (req, res) => {
     try {

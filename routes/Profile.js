@@ -2,8 +2,8 @@ const router = require("express").Router();
 const ProfileController = require("../controller/Profile");
 
 //MIDDLEWARE
-const { middlewareRouter } = require("./middleware");
-router.use(middlewareRouter);
+const { protectedMiddleware } = require("./middleware");
+router.use(protectedMiddleware);
 
 router.post("/", async (req, res) => {
     try {
