@@ -2,7 +2,6 @@ require("dotenv").config();
 const Sequelize = require("sequelize");
 const CronJob = require("cron").CronJob;
 const readline = require("readline");
-const ioHook = require("iohook");
 let creatingAccount = false;
 
 const
@@ -94,22 +93,21 @@ sequelize.authenticate()
             await printDbInfo();
 
             if(process.env.DEBUG_ENABLED) {
-                const KEY = "K";
-                ioHook.on("keyup", event => {
-                    if(!creatingAccount && event.rawcode == KEY.charCodeAt(0)) {
+                const KEY = "k";
+                const rl = readline.createInterface({
+                    input: process.stdin,
+                    output: process.stdout,
+                    terminal: true
+                });
+                
+                process.stdin.on("keypress", character => {
+                    if(!creatingAccount && character == KEY) {
                         console.clear();
                         creatingAccount = true;
                         
-                        const rl = readline.createInterface({
-                            input: process.stdin,
-                            output: process.stdout,
-                            terminal: false,
-                            console: false
-                        });
-
+                        rl.line = "";
                         rl.question("Introduce correo electrónico: ", email => {
                             rl.question("Introduce contraseña: ", async password => {
-                                rl.close();
                                 const account = await Account.create({ email: email, password: password, admin: true });
                                 if(account) {
                                     console.log("OK! Cuenta creada, ID: " + account.id);
@@ -122,9 +120,8 @@ sequelize.authenticate()
                         });
                     }
                 });
-                ioHook.start();
 
-                console.log("\n\n\nATENCIÓN: Modo depuración activado, presiona " + KEY + " para crear una cuenta con derechos de administrador.");
+                console.log("\n\n\nATENCIÓN: Modo depuración activado, presiona " + KEY.toUpperCase() + " para crear una cuenta con derechos de administrador.");
             }
 
             if(!process.env.DEBUG_ENABLED) {

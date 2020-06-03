@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const version = "0.0.1";
+const pjson = require("./package.json");
 
 require("./config/db");
 const router = require("./routes/index");
@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
-console.log("--- KEFLIX SERVER " + version + " ---\nDesarrollado por: adri1 (https://github.com/adri1samp/)\n");
+console.log("--- KEFLIX SERVER " + pjson.version + " ---\nDesarrollado por: adri1 (https://github.com/adri1samp/)\n");
 if(
     process.env.APP_PORT &&
     process.env.ACCESS_TOKEN_SECRET &&

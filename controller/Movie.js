@@ -129,11 +129,18 @@ const getMovieMediaInfo = (id) => {
     };
 }
 
+const count = async (where = null) => {
+    return await Movie.count({
+        where: where
+    });
+};
+
 module.exports = {
     create,
     get,
     getAll,
     destroy,
     getMovies,
-    getMovieMediaInfo
+    getMovieMediaInfo,
+    count
 };

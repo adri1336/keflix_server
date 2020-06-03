@@ -6,6 +6,7 @@ const ProfileRouter = require("./Profile");
 const MovieRouter = require("./Movie");
 const ProfileMovieRouter = require("./ProfileMovie");
 const GenreRouter = require("./Genre");
+const InfoRouter = require("./Info");
 
 router.use("/auth", AuthRouter);
 router.use("/account", AccountRouter);
@@ -13,5 +14,6 @@ router.use("/profile", ProfileRouter);
 router.use("/movie", MovieRouter);
 router.use("/profile_movie", ProfileMovieRouter);
 router.use("/genre", GenreRouter);
+router.use("/info", InfoRouter);
 
 module.exports = router;

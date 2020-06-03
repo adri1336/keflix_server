@@ -23,7 +23,7 @@ router.get("/:movieId/trailer.mp4", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) return res.sendStatus(403);
+            if(error) throw "invalid token";
             if(await verifyAccount(decoded)) {
                 const movieId = req.params.movieId;
                 const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/trailer.mp4";
@@ -48,7 +48,7 @@ router.get("/:movieId/video.mp4", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) return res.sendStatus(403);
+            if(error) throw "invalid token";
             if(await verifyAccount(decoded)) {
                 const movieId = req.params.movieId;
                 const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/video.mp4";
@@ -73,7 +73,7 @@ router.get("/:movieId/poster.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) return res.sendStatus(403);
+            if(error) throw "invalid token";
             if(await verifyAccount(decoded)) {
                 const movieId = req.params.movieId;
                 const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/poster.png";
@@ -98,7 +98,7 @@ router.get("/:movieId/backdrop.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) return res.sendStatus(403);
+            if(error) throw "invalid token";
             if(await verifyAccount(decoded)) {
                 const movieId = req.params.movieId;
                 const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/backdrop.png";
@@ -123,7 +123,7 @@ router.get("/:movieId/logo.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) return res.sendStatus(403);
+            if(error) throw "invalid token";
             if(await verifyAccount(decoded)) {
                 const movieId = req.params.movieId;
                 const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/logo.png";

@@ -21,8 +21,15 @@ const destroy = async (where) => {
     });
 };
 
+const count = async (where = null) => {
+    return await Genre.count({
+        where: where
+    });
+};
+
 module.exports = {
     create,
     update,
-    destroy
+    destroy,
+    count
 };

@@ -37,11 +37,18 @@ const checkPassword = async (profile, password) => {
     return await profile.checkPassword(password);
 };
 
+const count = async (where = null) => {
+    return await Profile.count({
+        where: where
+    });
+};
+
 module.exports = {
     create,
     get,
     getAll,
     update,
     destroy,
-    checkPassword
+    checkPassword,
+    count
 };

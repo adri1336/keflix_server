@@ -20,9 +20,16 @@ const checkPassword = async (account, password) => {
     return await account.checkPassword(password);
 };
 
+const count = async (where = null) => {
+    return await Account.count({
+        where: where
+    });
+};
+
 module.exports = {
     create,
     get,
     destroy,
-    checkPassword
+    checkPassword,
+    count
 };
