@@ -6,6 +6,7 @@ const AccountController = require("../controller/Account");
 const ProfileController = require("../controller/Profile");
 const GenreController = require("../controller/Genre");
 const MovieController = require("../controller/Movie");
+const pjson = require("../package.json");
 
 //MIDDLEWARE
 const { protectedMiddleware } = require("./middleware");
@@ -18,6 +19,10 @@ router.get("/", (req, res) => {
     //info
     let info = {};
     
+    //server
+    info.server = {};
+    info.server.version = pjson.version;
+
     //system
     info.system = {};
     info.system.platform = os.platform();
