@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api", router);
 
 console.clear();
-console.log("--- KEFLIX SERVER " + pjson.version + " ---\nDesarrollado por: adri1 (https://github.com/adri1samp/)\n");
+console.log("--- KEFLIX SERVER " + pjson.version + " ---\nDesarrollado por: adri1 (https://github.com/adri1336/)\n");
 if(
     process.env.APP_PORT &&
     process.env.ACCESS_TOKEN_SECRET &&

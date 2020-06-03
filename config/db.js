@@ -93,7 +93,7 @@ sequelize.authenticate()
             await printDbInfo();
 
             if(process.env.DEBUG_ENABLED == true) {
-                const KEY = "k";
+                const KEY = "a";
                 const rl = readline.createInterface({
                     input: process.stdin,
                     output: process.stdout,
@@ -108,12 +108,17 @@ sequelize.authenticate()
                         rl.line = "";
                         rl.question("Introduce correo electrónico: ", email => {
                             rl.question("Introduce contraseña: ", async password => {
-                                const account = await Account.create({ email: email, password: password, admin: true });
-                                if(account) {
-                                    console.log("OK! Cuenta creada, ID: " + account.id);
+                                if(email.length > 0 && password.length > 0) {
+                                    const account = await Account.create({ email: email, password: password, admin: true });
+                                    if(account) {
+                                        console.log("OK! Cuenta creada, ID: " + account.id + "\n\n");
+                                    }
+                                    else {
+                                        console.log("Error! No se pudo crear la cuenta\n\n");
+                                    }
                                 }
                                 else {
-                                    console.log("Error! No se pudo crear la cuenta");
+                                    console.log("Cancelado\n\n");
                                 }
                                 creatingAccount = false;
                             });
