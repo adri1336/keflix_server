@@ -10,6 +10,19 @@ router.get("/", (req, res) => {
     res.json(account);
 });
 
+router.get("/list", async (req, res) => {
+    try {
+        const account = req.account;
+        if(!account.admin) throw "invalid profile id";
+
+        const data = await AccountController.getAll();
+        res.json(data);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
 router.delete("/:accountId", async (req, res) => {
     try {
         const
