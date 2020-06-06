@@ -5,6 +5,41 @@ const AccountController = require("../controller/Account");
 const { protectedMiddleware } = require("./middleware");
 router.use(protectedMiddleware);
 
+router.post("/", async (req, res) => {
+    try {
+        const currentAccount = req.account;
+        if(!currentAccount.admin) throw "invalid profile id";
+        
+        let account = await AccountController.create(req.body);
+        account.password = undefined;
+        account.profiles = [];
+
+        res.json(account);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
+router.put("/:accountId", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { accountId } = req.params;
+
+        if(!account.admin) {
+            if(account.id !== accountId) throw "invalid account";
+        }
+
+        let targetAccount = await AccountController.get({ id: accountId });
+        targetAccount = await AccountController.update(targetAccount, req.body);
+        res.json(targetAccount);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
 router.get("/", (req, res) => {
     const account = req.account;
     res.json(account);

@@ -20,8 +20,19 @@ const getAll = async (where = null) => {
     });
 };
 
+const update = async (account, newAccount) => {
+    for(let property in newAccount) {
+        if(property in account) {
+            account[property] = newAccount[property];
+        }
+    } 
+    
+    await account.save();
+    return account;
+};
+
 const destroy = async (where) => {
-    return await Profile.destroy({
+    return await Account.destroy({
         where: where
     });
 };
@@ -40,6 +51,7 @@ module.exports = {
     create,
     get,
     getAll,
+    update,
     destroy,
     checkPassword,
     count

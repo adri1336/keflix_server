@@ -18,6 +18,19 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.get("/", async (req, res) => {
+    try {
+        const account = req.account;
+        if(!account.admin) throw "invalid account";
+        
+        const genres = await GenreController.getAll();
+        res.json(genres);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
 router.put("/:genreId", async (req, res) => {
     try {
         const
