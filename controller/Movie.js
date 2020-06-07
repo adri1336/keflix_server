@@ -59,13 +59,20 @@ const getMovies = async (options) => {
         }
     };
 
-    let order = [["movieId", "DESC"]];
+    let order = [["id", "DESC"]];
     if(options.sort_by) {
         order = [options.sort_by.split(".")];
     }
 
-    const limit = options.limit || 50;
-    const offset = options.page ? (options.limit * (options.page - 1)) : 0;
+    let limit = options.limit || 50;
+    let offset = 0;
+    if(limit == -1) {
+        limit = null;
+    }
+    else {
+        offset = options.page ? (options.limit * (options.page - 1)) : 0;
+    }
+    
     const movies = await getAll(where, order, limit, offset);
 
     //Genres Filter
@@ -100,7 +107,7 @@ const getMovies = async (options) => {
         for(let i = 0; i < final.length; i ++) {
             const movie = final[i];
             const profileInfo = await ProfileMovieController.get({
-                movieId: movie.movieId,
+                movieId: movie.id,
                 profileId: profileId
             });
             if(profileInfo) {

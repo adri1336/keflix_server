@@ -166,6 +166,23 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.get("/", async (req, res) => {
+    try {
+        const account = req.account;    
+        if(!account.admin) throw "invalid account";
+
+        const movies = await MovieController.getMovies({
+            include_adult: true,
+            include_no_published: true,
+            limit: -1
+        });
+        res.json(movies);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
 router.post("/discover", async (req, res) => {
     try {
         const movies = await MovieController.getMovies({

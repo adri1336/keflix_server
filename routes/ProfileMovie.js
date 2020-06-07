@@ -38,7 +38,7 @@ router.get("/:profileId/favs", async (req, res) => {
         const results = await ProfileMovieController.getAll({ profileId: profileId, fav: true });
         for (let index = 0; index < results.length; index++) {
             const result = results[index];
-            let movie = await MovieController.get({ movieId: result.movieId });
+            let movie = await MovieController.get({ id: result.movieId });
             if(movie) {
                 if(profile.adult_content || !movie.adult) {
                     movie.dataValues.profileInfo = result;
