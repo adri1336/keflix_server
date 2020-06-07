@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             original_title: {
                 type: DataTypes.STRING(128),
-                allowNull: false
+                allowNull: true
             },
             overview: {
                 type: DataTypes.STRING(1024),
@@ -26,11 +26,11 @@ module.exports = (sequelize, DataTypes) => {
             },
             popularity: {
                 type: DataTypes.FLOAT,
-                allowNull: false
+                allowNull: true
             },
             release_date: {
                 type: DataTypes.DATE,
-                allowNull: false
+                allowNull: true
             },
             runtime: {
                 type: DataTypes.INTEGER,
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
             },
             vote_average: {
                 type: DataTypes.FLOAT,
-                allowNull: false
+                allowNull: true
             },
             total_views: {
                 type: DataTypes.INTEGER,
