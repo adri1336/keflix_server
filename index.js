@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");
+const fileUpload = require("express-fileupload");
+const fs = require("fs");
 const bodyParser = require("body-parser");
 const pjson = require("./package.json");
 
@@ -10,8 +12,6 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use("/api", router);
-
 console.clear();
 console.log("--- KEFLIX SERVER " + pjson.version + " ---\nDesarrollado por: adri1 (https://github.com/adri1336/)\n");
 if(
@@ -21,7 +21,13 @@ if(
     process.env.REFRESH_TOKEN_SECRET &&
     process.env.REFRESH_TOKEN_EXPIRES_IN &&
     process.env.MEDIA_PATH
-) { 
+) {
+    app.use(fileUpload({
+        useTempFiles : true,
+        tempFileDir : process.env.MEDIA_PATH + "/tmp"
+    }));
+
+    app.use("/api", router);
     app.listen(process.env.APP_PORT, () => {
         console.log("OK! Servidor encendido y escuchando por el puerto: " + process.env.APP_PORT);
     });

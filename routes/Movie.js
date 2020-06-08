@@ -166,6 +166,40 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.post("/:movieId/upload", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { movieId } = req.params,
+            { fileName } = req.body;
+
+        if(!account.admin) {
+            throw "invalid account";
+        }
+        if(!req.files || Object.keys(req.files).length === 0) {
+            throw "no file";
+        }
+
+        const path = process.env.MEDIA_PATH + "/movies/" + movieId + "/";
+        if(!fs.existsSync(path)) {
+            await fs.promises.mkdir(path, { recursive: true });
+        }
+
+        const file = req.files.file;
+        file.mv(path + (fileName || file.name), error => {
+            if(error) {
+                return res.sendStatus(500);
+            }
+
+            res.sendStatus(200);
+        });
+    }
+    catch(error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+});
+
 router.get("/", async (req, res) => {
     try {
         const account = req.account;    
