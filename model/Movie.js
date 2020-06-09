@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             adult: {
                 type: DataTypes.BOOLEAN,
-                allowNull: false
+                allowNull: false,
+                defaultValue: false
             },
             original_title: {
                 type: DataTypes.STRING(128),

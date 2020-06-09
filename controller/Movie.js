@@ -6,7 +6,12 @@ const { Sequelize, Op } = require("sequelize");
 const fs = require("fs");
 
 const create = async (body) => {
-    return await Movie.create(body);
+    const movie = await Movie.create(body);
+    if(movie) {
+        const { genres } = body;
+        movie.addGenres(genres);
+    }
+    return movie;
 };
 
 const get = async (where) => {
@@ -28,6 +33,17 @@ const getAll = async (where, order, limit, offset) => {
             }
         },
     });
+};
+
+const update = async (movie, newMovie) => {
+    for(let property in newMovie) {
+        if(property in movie) {
+            movie[property] = newMovie[property];
+        }
+    } 
+    
+    await movie.save();
+    return movie;
 };
 
 const destroy = async (where) => {
@@ -146,6 +162,7 @@ module.exports = {
     create,
     get,
     getAll,
+    update,
     destroy,
     getMovies,
     getMovieMediaInfo,

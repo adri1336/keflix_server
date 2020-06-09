@@ -27,18 +27,23 @@ router.get("/:movieId/trailer.mp4", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) throw "invalid token";
-            if(await verifyAccount(decoded)) {
-                const movieId = req.params.movieId;
-                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/trailer.mp4";
-                if(fs.existsSync(file)) {
-                    res.sendFile(file);
+            try {
+                if(error) throw "invalid token";
+                if(await verifyAccount(decoded)) {
+                    const movieId = req.params.movieId;
+                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/trailer.mp4";
+                    if(fs.existsSync(file)) {
+                        res.sendFile(file);
+                    }
+                    else {
+                        res.json("file does not exists");
+                    }
                 }
                 else {
-                    res.json("file does not exists");
+                    res.sendStatus(403);
                 }
             }
-            else {
+            catch(error) {
                 res.sendStatus(403);
             }
         });
@@ -52,18 +57,23 @@ router.get("/:movieId/video.mp4", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) throw "invalid token";
-            if(await verifyAccount(decoded)) {
-                const movieId = req.params.movieId;
-                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/video.mp4";
-                if(fs.existsSync(file)) {
-                    res.sendFile(file);
+            try {
+                if(error) throw "invalid token";
+                if(await verifyAccount(decoded)) {
+                    const movieId = req.params.movieId;
+                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/video.mp4";
+                    if(fs.existsSync(file)) {
+                        res.sendFile(file);
+                    }
+                    else {
+                        res.json("file does not exists");
+                    }
                 }
                 else {
-                    res.json("file does not exists");
+                    res.sendStatus(403);
                 }
             }
-            else {
+            catch(error) {
                 res.sendStatus(403);
             }
         });
@@ -77,18 +87,23 @@ router.get("/:movieId/poster.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) throw "invalid token";
-            if(await verifyAccount(decoded)) {
-                const movieId = req.params.movieId;
-                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/poster.png";
-                if(fs.existsSync(file)) {
-                    res.sendFile(file);
+            try {
+                if(error) throw "invalid token";
+                if(await verifyAccount(decoded)) {
+                    const movieId = req.params.movieId;
+                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/poster.png";
+                    if(fs.existsSync(file)) {
+                        res.sendFile(file);
+                    }
+                    else {
+                        res.json("file does not exists");
+                    }
                 }
                 else {
-                    res.json("file does not exists");
+                    res.sendStatus(403);
                 }
             }
-            else {
+            catch(error) {
                 res.sendStatus(403);
             }
         });
@@ -102,18 +117,23 @@ router.get("/:movieId/backdrop.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) throw "invalid token";
-            if(await verifyAccount(decoded)) {
-                const movieId = req.params.movieId;
-                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/backdrop.png";
-                if(fs.existsSync(file)) {
-                    res.sendFile(file);
+            try {
+                if(error) throw "invalid token";
+                if(await verifyAccount(decoded)) {
+                    const movieId = req.params.movieId;
+                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/backdrop.png";
+                    if(fs.existsSync(file)) {
+                        res.sendFile(file);
+                    }
+                    else {
+                        res.json("file does not exists");
+                    }
                 }
                 else {
-                    res.json("file does not exists");
+                    res.sendStatus(403);
                 }
             }
-            else {
+            catch(error) {
                 res.sendStatus(403);
             }
         });
@@ -127,18 +147,23 @@ router.get("/:movieId/logo.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
-            if(error) throw "invalid token";
-            if(await verifyAccount(decoded)) {
-                const movieId = req.params.movieId;
-                const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/logo.png";
-                if(fs.existsSync(file)) {
-                    res.sendFile(file);
+            try {
+                if(error) throw "invalid token";
+                if(await verifyAccount(decoded)) {
+                    const movieId = req.params.movieId;
+                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/logo.png";
+                    if(fs.existsSync(file)) {
+                        res.sendFile(file);
+                    }
+                    else {
+                        res.json("file does not exists");
+                    }
                 }
                 else {
-                    res.json("file does not exists");
+                    res.sendStatus(403);
                 }
             }
-            else {
+            catch(error) {
                 res.sendStatus(403);
             }
         });
@@ -195,7 +220,23 @@ router.post("/:movieId/upload", async (req, res) => {
         });
     }
     catch(error) {
-        console.log(error);
+        res.status(400).json(error);
+    }
+});
+
+router.put("/:movieId", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { movieId } = req.params;
+
+        if(!account.admin) throw "invalid account";
+
+        let targetMovie = await MovieController.get({ id: movieId });
+        targetMovie = await MovieController.update(targetMovie, req.body);
+        res.json(targetMovie);
+    }
+    catch(error) {
         res.status(400).json(error);
     }
 });
