@@ -1,7 +1,7 @@
 {
-  "name": "keflix_server",
+  "name": "keflix-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Keflix Server",
   "main": "index.js",
   "bin": "index.js",
   "scripts": {
@@ -9,15 +9,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adri1samp/keflix_server.git"
+    "url": "git+https://github.com/adri1336/keflix_server.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/adri1samp/keflix_server/issues"
+  "license": "MIT",
+  "author": {
+    "name": "https://github.com/adri1336",
+    "email": "adri1pawn@gmail.com",
+    "url": "https://github.com/adri1336"
   },
-  "homepage": "https://github.com/adri1samp/keflix_server#readme",
+  "bugs": {
+    "url": "https://github.com/adri1336/keflix_server/issues"
+  },
+  "homepage": "https://github.com/adri1336/keflix_server#readme",
   "dependencies": {
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
