@@ -232,9 +232,30 @@ router.put("/:movieId", async (req, res) => {
 
         if(!account.admin) throw "invalid account";
 
-        let targetMovie = await MovieController.get({ id: movieId });
-        targetMovie = await MovieController.update(targetMovie, req.body);
-        res.json(targetMovie);
+        const targetMovie = await MovieController.get({ id: movieId });
+        const { id } = await MovieController.update(targetMovie, req.body);
+
+        const newMovie = await MovieController.getMovie(id);
+        res.json(newMovie);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
+router.put("/:movieId/genres", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { movieId } = req.params;
+
+        if(!account.admin) throw "invalid account";
+
+        const targetMovie = await MovieController.get({ id: movieId });
+        const { id } = await MovieController.updateGenres(targetMovie, req.body);
+
+        const newMovie = await MovieController.getMovie(id);
+        res.json(newMovie);
     }
     catch(error) {
         res.status(400).json(error);
@@ -287,7 +308,7 @@ router.delete("/:movieId", async (req, res) => {
 
         if(!account.admin) throw "invalid account";
         
-        const data = await MovieController.destroy({ id: movieId });
+        const data = await MovieController.destroy(movieId);
         if(!data) throw "invalid id";
         res.json(true);
     }

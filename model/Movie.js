@@ -1,5 +1,8 @@
+require("dotenv").config();
+const fs = require("fs");
+
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define("movie",
+    const Movie = sequelize.define("movie",
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -74,4 +77,13 @@ module.exports = (sequelize, DataTypes) => {
             freezeTableName: true
         }
     );
+
+    Movie.beforeDestroy((movie, options) => {
+        const { id } = movie;
+
+        const path = process.env.MEDIA_PATH + "/movies/" + id + "/";
+        fs.promises.rmdir(path, { recursive: true });
+    });
+
+    return Movie;
 };

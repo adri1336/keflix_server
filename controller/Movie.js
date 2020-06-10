@@ -16,8 +16,22 @@ const create = async (body) => {
 
 const get = async (where) => {
     return await Movie.findOne({
-        where: where
+        where: where,
+        include: {
+            model: Genre,
+            through: {
+                attributes: []
+            }
+        }
     });
+};
+
+const getMovie = async id => {
+    let movie = await get({ id: id });
+    
+    const mediaInfo = getMovieMediaInfo(movie.id);
+    movie.dataValues.mediaInfo = mediaInfo;
+    return movie;
 };
 
 const getAll = async (where, order, limit, offset) => {
@@ -31,7 +45,7 @@ const getAll = async (where, order, limit, offset) => {
             through: {
                 attributes: []
             }
-        },
+        }
     });
 };
 
@@ -46,10 +60,18 @@ const update = async (movie, newMovie) => {
     return movie;
 };
 
-const destroy = async (where) => {
-    return await Movie.destroy({
-        where: where
-    });
+const updateGenres = async (movie, genres) => {
+    await movie.setGenres(genres);
+    return movie;
+};
+
+const destroy = async id => {
+    const movie = await get({ id: id });
+    if(movie) {
+        await movie.destroy();
+        return true;
+    }
+    return false;
 };
 
 const getMovies = async (options) => {
@@ -161,8 +183,10 @@ const count = async (where = null) => {
 module.exports = {
     create,
     get,
+    getMovie,
     getAll,
     update,
+    updateGenres,
     destroy,
     getMovies,
     getMovieMediaInfo,
