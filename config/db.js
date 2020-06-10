@@ -148,6 +148,9 @@ async function printDbInfo() {
     count = await Profile.count();
     console.log("\tPerfiles: " + count);
 
+    count = await Genre.count();
+    console.log("\tGéneros: " + count);
+
     count = await Movie.count();
     console.log("\tPelículas: " + count);
 }
