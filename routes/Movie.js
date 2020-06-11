@@ -224,6 +224,26 @@ router.post("/:movieId/upload", async (req, res) => {
     }
 });
 
+router.post("/:movieId/remove", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { movieId } = req.params,
+            { fileName } = req.body;
+
+        if(!account.admin) throw "invalid account";
+        
+        const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/" + fileName;
+        if(!fs.existsSync(file)) throw "invalid file";
+
+        await fs.promises.unlink(file);
+        res.json(true);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
 router.put("/:movieId", async (req, res) => {
     try {
         const
@@ -273,6 +293,20 @@ router.get("/", async (req, res) => {
             limit: -1
         });
         res.json(movies);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
+router.get("/:movieId", async (req, res) => {
+    try {
+        const account = req.account;    
+        if(!account.admin) throw "invalid account";
+
+        const { movieId } = req.params;
+        const movie = await MovieController.getMovie(movieId);
+        res.json(movie);
     }
     catch(error) {
         res.status(400).json(error);
