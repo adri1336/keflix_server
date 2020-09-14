@@ -6,16 +6,6 @@ Para Raspberry descarga la versión ARMv7, ha sido probado en una Raspberry PI 4
 
 ## Archivo de configuración (.env)
 Debes crear un archivo .env en la carpeta raíz del servidor, debe contener los siguientes parámetros:
-* APP_PORT
-* ACCESS_TOKEN_SECRET
-* ACCESS_TOKEN_EXPIRES_IN
-* REFRESH_TOKEN_SECRET
-* REFRESH_TOKEN_EXPIRES_IN
-* MEDIA_PATH
-* DEBUG_ENABLED (opcional)
-* DATABASE_LOGGING (opcional)
-* FORCE_DATABASE_SYNC (opcional)
-
 | Parámetro | Descripción | Ejemplo |
 | ------------- | ------------- | ------------- |
 | APP_PORT | Puerto en el que se ejecutará el servidor | 3000 |
