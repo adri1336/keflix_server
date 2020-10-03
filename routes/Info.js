@@ -6,6 +6,7 @@ const AccountController = require("../controller/Account");
 const ProfileController = require("../controller/Profile");
 const GenreController = require("../controller/Genre");
 const MovieController = require("../controller/Movie");
+const TvController = require("../controller/Tv");
 const pjson = require("../package.json");
 
 //MIDDLEWARE
@@ -67,6 +68,7 @@ router.get("/", (req, res) => {
             info.stats.profiles = await ProfileController.count();
             info.stats.genres = await GenreController.count();
             info.stats.movies = await MovieController.count();
+            info.stats.tvs = await TvController.count();
             
             res.json(info);
         });

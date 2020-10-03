@@ -2,7 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 
 module.exports = (sequelize, DataTypes) => {
-    const Movie = sequelize.define("movie",
+    const Tv = sequelize.define("tv",
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: false
             },
-            original_title: {
+            original_name: {
                 type: DataTypes.STRING(128),
                 allowNull: true
             },
@@ -32,15 +32,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.FLOAT,
                 allowNull: true
             },
-            release_date: {
+            first_air_date: {
                 type: DataTypes.DATE,
                 allowNull: true
             },
-            tagline: {
-                type: DataTypes.STRING(128),
-                allowNull: true
-            },
-            title: {
+            name: {
                 type: DataTypes.STRING(128),
                 allowNull: false
             },
@@ -74,12 +70,12 @@ module.exports = (sequelize, DataTypes) => {
         }
     );
 
-    Movie.beforeDestroy((movie, options) => {
-        const { id } = movie;
+    Tv.beforeDestroy((tv, options) => {
+        const { id } = tv;
 
-        const path = process.env.MEDIA_PATH + "/movies/" + id + "/";
+        const path = process.env.MEDIA_PATH + "/tv/" + id + "/";
         fs.promises.rmdir(path, { recursive: true });
     });
 
-    return Movie;
+    return Tv;
 };

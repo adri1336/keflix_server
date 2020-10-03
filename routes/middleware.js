@@ -51,7 +51,23 @@ const protectedMiddleware = (req, res, next) => {
     }
 };
 
+const verifyToken = (token, callback) => {
+    if(!token) res.sendStatus(403);
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, callback);
+};
+
+const verifyAccount = async (decoded) => {
+    const { accountId, updatedAt } = decoded;
+    const account = await AccountController.get({ id: accountId });
+    if(!account || account.updatedAt.getTime() != updatedAt) {
+        return false;
+    }
+    return true;
+};
+
 module.exports = {
     middleware,
-    protectedMiddleware
+    protectedMiddleware,
+    verifyToken,
+    verifyAccount
 };

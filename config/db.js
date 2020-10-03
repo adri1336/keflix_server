@@ -8,13 +8,16 @@ const
     AccountModel = require("../model/Account"),
     ProfileModel = require("../model/Profile"),
     ProfileMovieModel = require("../model/ProfileMovie"),
+    ProfileTvModel = require("../model/ProfileTv"),
     GenreModel = require("../model/Genre"),
-    MovieModel = require("../model/Movie");
+    MovieModel = require("../model/Movie"),
+    TvModel = require("../model/Tv"),
+    EpisodeTvModel = require("../model/EpisodeTv");
 
 const sequelize = new Sequelize(
     {
         dialect: "sqlite",
-        storage: "database.sqlite",
+        storage: process.env.DATABASE_PATH,
         logging: process.env.DATABASE_LOGGING == true ? console.log : false,
         force: process.env.FORCE_DATABASE_SYNC == true ? true : false
     }
@@ -24,8 +27,11 @@ const
     Account = AccountModel(sequelize, Sequelize),
     Profile = ProfileModel(sequelize, Sequelize),
     ProfileMovie = ProfileMovieModel(sequelize, Sequelize),
+    ProfileTv = ProfileTvModel(sequelize, Sequelize),
     Genre = GenreModel(sequelize, Sequelize),
-    Movie = MovieModel(sequelize, Sequelize);
+    Movie = MovieModel(sequelize, Sequelize),
+    Tv = TvModel(sequelize, Sequelize),
+    EpisodeTv = EpisodeTvModel(sequelize, Sequelize);
 
 
 // --- Associations ---
@@ -49,6 +55,16 @@ Account.hasMany(Movie, {
 });
 Movie.belongsTo(Account);
 
+//Account-Tv
+Account.hasMany(Tv, {
+    foreignKey: {
+        allowNull: true,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    }
+});
+Tv.belongsTo(Account);
+
 //Account-Genre
 Account.hasMany(Genre, {
     foreignKey: {
@@ -67,6 +83,24 @@ Movie.belongsToMany(Profile, { through: ProfileMovie });
 Movie.belongsToMany(Genre, { through: "movie_genre" });
 Genre.belongsToMany(Movie, { through: "movie_genre" });
 
+//Profile-Tv
+Profile.belongsToMany(Tv, { through: ProfileTv });
+Tv.belongsToMany(Profile, { through: ProfileTv });
+
+//Tv-Genre
+Tv.belongsToMany(Genre, { through: "tv_genre" });
+Genre.belongsToMany(Tv, { through: "tv_genre" });
+
+//Tv-EpisodeTv
+Tv.hasMany(EpisodeTv, {
+    foreignKey: {
+        allowNull: false,
+        primaryKey: true,
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE"
+    }
+});
+EpisodeTv.belongsTo(Tv);
 
 // --- Cron Jobs ---
 //Movie (restablecer a 0 views_today todos los días a las 00:00)
@@ -82,6 +116,21 @@ new CronJob("0 0 * * 1", async () => {
 //Movie (restablecer a 0 views_last_month el primer día del mes a las 00:00)
 new CronJob("0 0 1 * *", async () => {
     await Movie.update({ views_last_month: 0 }, { where: {} });
+}).start();
+
+//Tv (restablecer a 0 views_today todos los días a las 00:00)
+new CronJob("0 0 * * *", async () => {
+    await Tv.update({ views_today: 0 }, { where: {} });
+}).start();
+
+//Tv (restablecer a 0 views_last_week todos los lunes a las 00:00)
+new CronJob("0 0 * * 1", async () => {
+    await Tv.update({ views_last_week: 0 }, { where: {} });
+}).start();
+
+//Tv (restablecer a 0 views_last_month el primer día del mes a las 00:00)
+new CronJob("0 0 1 * *", async () => {
+    await Tv.update({ views_last_month: 0 }, { where: {} });
 }).start();
 
 
@@ -153,12 +202,18 @@ async function printDbInfo() {
 
     count = await Movie.count();
     console.log("\tPelículas: " + count);
+
+    count = await Tv.count();
+    console.log("\tSeries: " + count);
 }
 
 module.exports = {
     Account,
     Profile,
     ProfileMovie,
+    ProfileTv,
     Genre,
-    Movie
+    Movie,
+    Tv,
+    EpisodeTv
 };

@@ -1,21 +1,23 @@
 require("dotenv").config();
 const router = require("express").Router();
 const fs = require("fs");
-const MovieController = require("../controller/Movie");
+const TvController = require("../controller/Tv");
+const EpisodeTvController = require("../controller/EpisodeTv");
 
 //MIDDLEWARE
 const { middleware, protectedMiddleware, verifyToken, verifyAccount } = require("./middleware");
+const EpisodeTv = require("../controller/EpisodeTv");
 router.use(middleware);
 
-router.get("/:movieId/trailer.mp4", async (req, res) => {
+router.get("/:tvId/trailer.mp4", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             try {
                 if(error) throw "invalid token";
                 if(await verifyAccount(decoded)) {
-                    const movieId = req.params.movieId;
-                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/trailer.mp4";
+                    const tvId = req.params.tvId;
+                    const file = process.env.MEDIA_PATH + "/tv/" + tvId + "/trailer.mp4";
                     if(fs.existsSync(file)) {
                         res.sendFile(file);
                     }
@@ -37,15 +39,15 @@ router.get("/:movieId/trailer.mp4", async (req, res) => {
     }
 });
 
-router.get("/:movieId/video.mp4", async (req, res) => {
+router.get("/:tvId/:season/:episode/video.mp4", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             try {
                 if(error) throw "invalid token";
                 if(await verifyAccount(decoded)) {
-                    const movieId = req.params.movieId;
-                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/video.mp4";
+                    const { tvId, season, episode } = req.params;
+                    const file = process.env.MEDIA_PATH + "/tv/" + tvId + "/" + season + "/" + episode + "/video.mp4";
                     if(fs.existsSync(file)) {
                         res.sendFile(file);
                     }
@@ -67,15 +69,15 @@ router.get("/:movieId/video.mp4", async (req, res) => {
     }
 });
 
-router.get("/:movieId/poster.png", async (req, res) => {
+router.get("/:tvId/:season/:episode/backdrop.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             try {
                 if(error) throw "invalid token";
                 if(await verifyAccount(decoded)) {
-                    const movieId = req.params.movieId;
-                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/poster.png";
+                    const tvId = req.params.tvId;
+                    const file = process.env.MEDIA_PATH + "/tv/" + tvId + "/" + season + "/" + episode + "/backdrop.png";
                     if(fs.existsSync(file)) {
                         res.sendFile(file);
                     }
@@ -97,15 +99,15 @@ router.get("/:movieId/poster.png", async (req, res) => {
     }
 });
 
-router.get("/:movieId/backdrop.png", async (req, res) => {
+router.get("/:tvId/poster.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             try {
                 if(error) throw "invalid token";
                 if(await verifyAccount(decoded)) {
-                    const movieId = req.params.movieId;
-                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/backdrop.png";
+                    const tvId = req.params.tvId;
+                    const file = process.env.MEDIA_PATH + "/tv/" + tvId + "/poster.png";
                     if(fs.existsSync(file)) {
                         res.sendFile(file);
                     }
@@ -127,15 +129,45 @@ router.get("/:movieId/backdrop.png", async (req, res) => {
     }
 });
 
-router.get("/:movieId/logo.png", async (req, res) => {
+router.get("/:tvId/backdrop.png", async (req, res) => {
     try {
         const token = req.query.token;
         verifyToken(token, async (error, decoded) => {
             try {
                 if(error) throw "invalid token";
                 if(await verifyAccount(decoded)) {
-                    const movieId = req.params.movieId;
-                    const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/logo.png";
+                    const tvId = req.params.tvId;
+                    const file = process.env.MEDIA_PATH + "/tv/" + tvId + "/backdrop.png";
+                    if(fs.existsSync(file)) {
+                        res.sendFile(file);
+                    }
+                    else {
+                        res.json("file does not exists");
+                    }
+                }
+                else {
+                    res.sendStatus(403);
+                }
+            }
+            catch(error) {
+                res.sendStatus(403);
+            }
+        });
+    }
+    catch(error) {
+        res.sendStatus(403);
+    }
+});
+
+router.get("/:tvId/logo.png", async (req, res) => {
+    try {
+        const token = req.query.token;
+        verifyToken(token, async (error, decoded) => {
+            try {
+                if(error) throw "invalid token";
+                if(await verifyAccount(decoded)) {
+                    const tvId = req.params.tvId;
+                    const file = process.env.MEDIA_PATH + "/tv/" + tvId + "/logo.png";
                     if(fs.existsSync(file)) {
                         res.sendFile(file);
                     }
@@ -167,19 +199,19 @@ router.post("/", async (req, res) => {
         if(!account.admin) throw "invalid account";
         req.body.accountId = account.id;
 
-        const movie = await MovieController.create(req.body);
-        res.json(movie);
+        const tv = await TvController.create(req.body);
+        res.json(tv);
     }
     catch(error) {
         res.status(400).json(error);
     }
 });
 
-router.post("/:movieId/upload", async (req, res) => {
+router.post("/:tvId/upload", async (req, res) => {
     try {
         const
             account = req.account,
-            { movieId } = req.params,
+            { tvId } = req.params,
             { fileName } = req.body;
 
         if(!account.admin) {
@@ -189,7 +221,7 @@ router.post("/:movieId/upload", async (req, res) => {
             throw "no file";
         }
 
-        const path = process.env.MEDIA_PATH + "/movies/" + movieId + "/";
+        let path = process.env.MEDIA_PATH + "/tv/" + tvId + "/";
         if(!fs.existsSync(path)) {
             await fs.promises.mkdir(path, { recursive: true });
         }
@@ -208,16 +240,16 @@ router.post("/:movieId/upload", async (req, res) => {
     }
 });
 
-router.post("/:movieId/remove", async (req, res) => {
+router.post("/:tvId/remove", async (req, res) => {
     try {
         const
             account = req.account,
-            { movieId } = req.params,
+            { tvId } = req.params,
             { fileName } = req.body;
 
         if(!account.admin) throw "invalid account";
         
-        const file = process.env.MEDIA_PATH + "/movies/" + movieId + "/" + fileName;
+        let file = process.env.MEDIA_PATH + "/tv/" + tvId + "/" + fileName;
         if(!fs.existsSync(file)) throw "invalid file";
 
         await fs.promises.unlink(file);
@@ -228,38 +260,38 @@ router.post("/:movieId/remove", async (req, res) => {
     }
 });
 
-router.put("/:movieId", async (req, res) => {
+router.put("/:tvId", async (req, res) => {
     try {
         const
             account = req.account,
-            { movieId } = req.params;
+            { tvId } = req.params;
 
         if(!account.admin) throw "invalid account";
 
-        const targetMovie = await MovieController.get({ id: movieId });
-        const { id } = await MovieController.update(targetMovie, req.body);
+        const targetTv = await TvController.get({ id: tvId });
+        const { id } = await TvController.update(targetTv, req.body);
 
-        const newMovie = await MovieController.getMovie(id);
-        res.json(newMovie);
+        const newTv = await TvController.getTv(id);
+        res.json(newTv);
     }
     catch(error) {
         res.status(400).json(error);
     }
 });
 
-router.put("/:movieId/genres", async (req, res) => {
+router.put("/:tvId/genres", async (req, res) => {
     try {
         const
             account = req.account,
-            { movieId } = req.params;
+            { tvId } = req.params;
 
         if(!account.admin) throw "invalid account";
 
-        const targetMovie = await MovieController.get({ id: movieId });
-        const { id } = await MovieController.updateGenres(targetMovie, req.body);
+        const targetTv = await TvController.get({ id: tvId });
+        const { id } = await TvController.updateGenres(targetTv, req.body);
 
-        const newMovie = await MovieController.getMovie(id);
-        res.json(newMovie);
+        const newTv = await TvController.getTv(id);
+        res.json(newTv);
     }
     catch(error) {
         res.status(400).json(error);
@@ -271,26 +303,26 @@ router.get("/", async (req, res) => {
         const account = req.account;    
         if(!account.admin) throw "invalid account";
 
-        const movies = await MovieController.getMovies({
+        const tvs = await TvController.getTvs({
             include_adult: true,
             include_no_published: true,
             limit: -1
         });
-        res.json(movies);
+        res.json(tvs);
     }
     catch(error) {
         res.status(400).json(error);
     }
 });
 
-router.get("/:movieId", async (req, res) => {
+router.get("/:tvId", async (req, res) => {
     try {
         const account = req.account;    
         if(!account.admin) throw "invalid account";
 
-        const { movieId } = req.params;
-        const movie = await MovieController.getMovie(movieId);
-        res.json(movie);
+        const { tvId } = req.params;
+        const tv = await TvController.getTv(tvId);
+        res.json(tv);
     }
     catch(error) {
         res.status(400).json(error);
@@ -299,7 +331,7 @@ router.get("/:movieId", async (req, res) => {
 
 router.post("/discover", async (req, res) => {
     try {
-        const movies = await MovieController.getMovies({
+        const tvs = await TvController.getTvs({
             search: req.body.search,
             include_adult: req.body.include_adult,
             year: req.body.year,
@@ -311,24 +343,95 @@ router.post("/discover", async (req, res) => {
             without_genres: req.body.without_genres,
             profile_id: req.body.profile_id
         });
-        res.json(movies);
+        res.json(tvs);
     }
     catch(error) {
         res.status(400).json(error);
     }
 });
 
-router.delete("/:movieId", async (req, res) => {
+router.delete("/:tvId", async (req, res) => {
     try {
         const
             account = req.account,
-            { movieId } = req.params;
+            { tvId } = req.params;
 
         if(!account.admin) throw "invalid account";
         
-        const data = await MovieController.destroy(movieId);
+        const data = await TvController.destroy(tvId);
         if(!data) throw "invalid id";
         res.json(true);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
+router.delete("/:tvId/:season/:episode", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { tvId, season, episode } = req.params;
+
+        if(!account.admin) throw "invalid account";
+        
+        const data = await EpisodeTvController.destroy(tvId, season, episode);
+        if(!data) throw "invalid id";
+        res.json(true);
+    }
+    catch(error) {
+        res.status(400).json(error);
+    }
+});
+
+router.post("/:tvId/:season/:episode", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { tvId, season, episode } = req.params;
+            
+        if(!account.admin) throw "invalid account";
+        req.body.accountId = account.id;
+        req.body.tvId = tvId;
+        req.body.season = season;
+        req.body.episode = episode;
+
+        const theEpisode = await EpisodeTvController.create(req.body);
+        res.json(theEpisode);
+    }
+    catch(error) {
+        console.log(error);
+        res.status(400).json(error);
+    }
+});
+
+router.post("/:tvId/:season/:episode/upload", async (req, res) => {
+    try {
+        const
+            account = req.account,
+            { tvId, season, episode } = req.params,
+            { fileName } = req.body;
+
+        if(!account.admin) {
+            throw "invalid account";
+        }
+        if(!req.files || Object.keys(req.files).length === 0) {
+            throw "no file";
+        }
+
+        let path = process.env.MEDIA_PATH + "/tv/" + tvId + "/" + season + "/" + episode + "/";
+        if(!fs.existsSync(path)) {
+            await fs.promises.mkdir(path, { recursive: true });
+        }
+
+        const file = req.files.file;
+        file.mv(path + (fileName || file.name), error => {
+            if(error) {
+                return res.sendStatus(500);
+            }
+
+            res.sendStatus(200);
+        });
     }
     catch(error) {
         res.status(400).json(error);
