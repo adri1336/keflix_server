@@ -76,7 +76,7 @@ router.get("/:tvId/:season/:episode/backdrop.png", async (req, res) => {
             try {
                 if(error) throw "invalid token";
                 if(await verifyAccount(decoded)) {
-                    const tvId = req.params.tvId;
+                    const { tvId, season, episode } = req.params;
                     const file = process.env.MEDIA_PATH + "/tv/" + tvId + "/" + season + "/" + episode + "/backdrop.png";
                     if(fs.existsSync(file)) {
                         res.sendFile(file);
