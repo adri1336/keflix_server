@@ -19,19 +19,24 @@ const create = async (body) => {
 const get = async (where) => {
     return await Tv.findOne({
         where: where,
-        include: {
-            model: Genre,
-            through: {
-                attributes: []
+        include: [
+            {
+                model: Genre,
+                through: {
+                    attributes: []
+                },
+                required: false
             },
-            required: false
-        }
+            {
+                model: EpisodeTv,
+                required: false
+            }
+        ]
     });
 };
 
 const getTv = async id => {
     let tv = await get({ id: id });
-    
     const mediaInfo = getTvMediaInfo(tv.id);
     tv.dataValues.mediaInfo = mediaInfo;
 

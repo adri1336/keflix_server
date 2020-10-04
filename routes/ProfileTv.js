@@ -38,7 +38,7 @@ router.get("/:profileId/favs", async (req, res) => {
         const results = await ProfileTvController.getAll({ profileId: profileId, fav: true });
         for (let index = 0; index < results.length; index++) {
             const result = results[index];
-            let tv = await TvController.get({ id: result.tvId });
+            let tv = await TvController.getTv(result.tvId);
             if(tv) {
                 if(profile.adult_content || !tv.adult) {
                     tv.dataValues.profileInfo = result;
