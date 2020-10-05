@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const fileUpload = require("express-fileupload");
-const fs = require("fs");
 const bodyParser = require("body-parser");
 const pjson = require("./package.json");
 

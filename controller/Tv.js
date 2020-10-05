@@ -5,7 +5,7 @@ const ProfileTvController = require("../controller/ProfileTv");
 const EpisodeTvController = require("../controller/EpisodeTv");
 const { Sequelize, Op } = require("sequelize");
 const fs = require("fs");
-const { getVideoDurationInSeconds } = require("get-video-duration");
+const { getVideoDurationInSeconds } = require("../config/get-video-duration");
 
 const create = async (body) => {
     const tv = await Tv.create(body);

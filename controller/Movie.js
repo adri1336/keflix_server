@@ -4,7 +4,7 @@ const { Genre } = require("../config/db");
 const ProfileMovieController = require("../controller/ProfileMovie");
 const { Sequelize, Op } = require("sequelize");
 const fs = require("fs");
-const { getVideoDurationInSeconds } = require("get-video-duration");
+const { getVideoDurationInSeconds } = require("../config/get-video-duration");
 
 const create = async (body) => {
     const movie = await Movie.create(body);
