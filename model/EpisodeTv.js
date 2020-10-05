@@ -20,6 +20,11 @@ module.exports = (sequelize, DataTypes) => {
             overview: {
                 type: DataTypes.STRING(1024),
                 allowNull: true
+            },
+            runtime: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
             }
         },
         {

@@ -4,7 +4,6 @@ const { Genre } = require("../config/db");
 const ProfileMovieController = require("../controller/ProfileMovie");
 const { Sequelize, Op } = require("sequelize");
 const fs = require("fs");
-const { getVideoDurationInSeconds } = require("../config/get-video-duration");
 
 const create = async (body) => {
     const movie = await Movie.create(body);
@@ -33,14 +32,6 @@ const getMovie = async id => {
     
     const mediaInfo = getMovieMediaInfo(movie.id);
     movie.dataValues.mediaInfo = mediaInfo;
-
-    movie.dataValues.runtime = 0;
-    if(mediaInfo.video) {
-        const videoPath = process.env.MEDIA_PATH + "/movies/" + id + "/video.mp4";
-        let duration = await getVideoDurationInSeconds(videoPath);
-        duration = Math.round(duration / 60);
-        movie.dataValues.runtime = duration;
-    }
     return movie;
 };
 
@@ -170,14 +161,6 @@ const getMovies = async (options) => {
         const movie = final[i];
         const mediaInfo = getMovieMediaInfo(movie.id);
         final[i].dataValues.mediaInfo = mediaInfo;
-
-        final[i].dataValues.runtime = 0;
-        if(mediaInfo.video) {
-            const videoPath = process.env.MEDIA_PATH + "/movies/" + movie.id + "/video.mp4";
-            let duration = await getVideoDurationInSeconds(videoPath);
-            duration = Math.round(duration / 60);
-            final[i].dataValues.runtime = duration;
-        }
     }
     return final;
 }

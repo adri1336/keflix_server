@@ -5,7 +5,6 @@ const ProfileTvController = require("../controller/ProfileTv");
 const EpisodeTvController = require("../controller/EpisodeTv");
 const { Sequelize, Op } = require("sequelize");
 const fs = require("fs");
-const { getVideoDurationInSeconds } = require("../config/get-video-duration");
 
 const create = async (body) => {
     const tv = await Tv.create(body);
@@ -46,14 +45,6 @@ const getTv = async id => {
         const episode = episodes[j];
         const mediaInfo = EpisodeTvController.getEpisodeMediaInfo(tv.id, episode.season, episode.episode);
         episode.dataValues.mediaInfo = mediaInfo;
-        
-        episode.dataValues.runtime = 0;
-        if(mediaInfo.video) {
-            const videoPath = process.env.MEDIA_PATH + "/tv/" + tv.id + "/" + episode.season + "/" + episode.episode + "/video.mp4";
-            let duration = await getVideoDurationInSeconds(videoPath);
-            duration = Math.round(duration / 60);
-            episode.dataValues.runtime = duration;
-        }
     }
 
     return tv;
@@ -198,14 +189,6 @@ const getTvs = async (options) => {
             const episode = episodes[j];
             const mediaInfo = EpisodeTvController.getEpisodeMediaInfo(tv.id, episode.season, episode.episode);
             episode.dataValues.mediaInfo = mediaInfo;
-            
-            episode.dataValues.runtime = 0;
-            if(mediaInfo.video) {
-                const videoPath = process.env.MEDIA_PATH + "/tv/" + tv.id + "/" + episode.season + "/" + episode.episode + "/video.mp4";
-                let duration = await getVideoDurationInSeconds(videoPath);
-                duration = Math.round(duration / 60);
-                episode.dataValues.runtime = duration;
-            }
         }
     }
 

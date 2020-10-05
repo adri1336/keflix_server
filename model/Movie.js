@@ -36,6 +36,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
                 allowNull: true
             },
+            runtime: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                defaultValue: 0
+            },
             tagline: {
                 type: DataTypes.STRING(128),
                 allowNull: true
