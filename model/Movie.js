@@ -1,5 +1,5 @@
 require("dotenv").config();
-const fs = require("fs");
+const rmdir = require("rimraf");
 
 module.exports = (sequelize, DataTypes) => {
     const Movie = sequelize.define("movie",
@@ -82,8 +82,8 @@ module.exports = (sequelize, DataTypes) => {
     Movie.beforeDestroy((movie, options) => {
         const { id } = movie;
 
-        const path = process.env.MEDIA_PATH + "/movies/" + id + "/";
-        fs.promises.rmdir(path, { recursive: true });
+        const path = process.env.MEDIA_PATH + "/movies/" + id;
+        rmdir(path, function(error) { if(error) console.log(error) });
     });
 
     return Movie;
