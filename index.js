@@ -19,7 +19,8 @@ if(
     process.env.ACCESS_TOKEN_EXPIRES_IN &&
     process.env.REFRESH_TOKEN_SECRET &&
     process.env.REFRESH_TOKEN_EXPIRES_IN &&
-    process.env.MEDIA_PATH
+    process.env.MEDIA_PATH &&
+    process.env.DATABASE_PATH
 ) {
     app.use(fileUpload({
         useTempFiles : true,
@@ -40,6 +41,7 @@ else {
         \t REFRESH_TOKEN_SECRET\n\
         \t REFRESH_TOKEN_EXPIRES_IN\n\
         \t MEDIA_PATH\n\
+        \t DATABASE_PATH\n\
         \t DEBUG_ENABLED (opcional)\n\
         \t DATABASE_LOGGING (opcional)\n\
         \t FORCE_DATABASE_SYNC (opcional)\n\
