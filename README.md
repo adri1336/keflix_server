@@ -14,6 +14,7 @@ Debes crear un archivo .env en la carpeta raíz del servidor, debe contener los 
 | REFRESH_TOKEN_SECRET | Cadena aleatoria para generar los token de refresco | JLPqBeMRdA93cJT3 |
 | REFRESH_TOKEN_EXPIRES_IN | Tiempo de vida del token de refresco | 7d |
 | MEDIA_PATH | Ruta absoluta donde se guardarán las películas (puede ser un disco duro) | /mnt/media |
+| DATABASE_PATH (>=v1.1.0) | Ruta absoluta donde está o se creará la base de datos del servidor | /mnt/media/database.sqlite |
 | DEBUG_ENABLED (opcional) | Activa o desactiva la depuración | false |
 | DATABASE_LOGGING (opcional) | Activa o desactiva la depuración de la DB | false |
 | FORCE_DATABASE_SYNC (opcional) | Fuerza la sincronización de las tablas (borra la DB y la crea de nuevo) | false |
