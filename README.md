@@ -15,9 +15,9 @@ Debes crear un archivo .env en la carpeta raíz del servidor, debe contener los 
 | REFRESH_TOKEN_EXPIRES_IN | Tiempo de vida del token de refresco | 7d |
 | MEDIA_PATH | Ruta absoluta donde se guardarán las películas (puede ser un disco duro) | /mnt/media |
 | DATABASE_PATH (>=v1.1.0) | Ruta absoluta donde está o se creará la base de datos del servidor | /mnt/media/database.sqlite |
-| DEBUG_ENABLED (opcional) | Activa o desactiva la depuración | false |
-| DATABASE_LOGGING (opcional) | Activa o desactiva la depuración de la DB | false |
-| FORCE_DATABASE_SYNC (opcional) | Fuerza la sincronización de las tablas (borra la DB y la crea de nuevo) | false |
+| DEBUG_ENABLED (opcional) | Activa o desactiva la depuración | 1 |
+| DATABASE_LOGGING (opcional) | Activa o desactiva la depuración de la DB | 0 |
+| FORCE_DATABASE_SYNC (opcional) | Fuerza la sincronización de las tablas (borra la DB y la crea de nuevo) | 0 |
 
 ## Como crear el primer usuario administrador
 Activa el modo depuración (DEBUG_ENABLED = true) y al arrancar el servidor podrás ingresar el correo y contraseña para crear un usuario administrador desde la consola.
